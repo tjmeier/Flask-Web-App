@@ -1,0 +1,21 @@
+{% extends "base.html" %} <!-- extends base.html and allows any blocks to be overridden here-->
+{% block title %}Login{% endblock %}
+
+<!-- content that we want displayed on home page goes here-->
+{% block content %}
+<form method="POST"> <!-- HTTP post-->
+    <h3 align="center">Login</h3>
+    <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email"/>
+
+
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password"/>
+
+        <br />
+
+        <button type="submit" class="btn btn-success">Login</button>
+    </div>
+</form>
+{% endblock %}

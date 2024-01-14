@@ -73,7 +73,10 @@ def create_account():
             db.session.add(new_user)
             db.session.commit()
 
-            flash('Account successfully created!', category='success')
+            flash('Account successfully created! Welcome, '+new_user.firstName+'!', category='success')
+
+            login_user(new_user, remember=True) #using flask_login, when you create an account, logs you in automatically
+
             
             return redirect(url_for('views.home')) #safer than just typing in redirect("/") incase the url ever changes
 

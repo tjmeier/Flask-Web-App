@@ -41,6 +41,9 @@
                   {% else %}
                     <a class="nav-item nav-link" id="home" href="/">Home</a>
                     <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
+                    {%if user.is_admin%}
+                    <a class="nav-item nav-link" id="admin" href="/admin">Admin</a>
+                    {%endif%}
                   {% endif %}
 
 

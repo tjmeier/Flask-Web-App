@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from .models import Note
 from . import db #imports database 'db' from the current directory defined in __init__.py
@@ -35,3 +35,19 @@ def delete_note():
             db.session.delete(note) #deletes the note from the database
             db.session.commit()
     return ""; #we need to return something
+
+
+
+@views.route('/admin', methods=['GET', 'POST'])
+@login_required
+def admin():
+    if (current_user.is_admin):
+        data = request.form
+        
+        if request.method == 'POST':
+            pass
+
+        return render_template("admin.html", user=current_user)
+
+    else:
+        return redirect(url_for('views.home'))

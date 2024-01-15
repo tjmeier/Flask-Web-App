@@ -4,6 +4,11 @@ from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db #imports database 'db' from the current directory defined in __init__.py
 
+ADMINS = {
+    "tylerjmeier1@gmail.com",
+    "teierjmyler1@gmail.com"
+}
+
 
 auth = Blueprint('auth', __name__)
 
@@ -21,6 +26,14 @@ def login():
             if check_password_hash(user.password, password):
                 flash('Welcome, '+user.firstName+'!', category='success')
                 login_user(user, remember=True) #using flask_login, remembers the user is logged in for the session
+
+
+                #checks list of admin emails for the entered email to give admin status
+                if (email in ADMINS):
+                    user.is_admin = True
+                else:
+                    user.is_admin = False
+
                 return redirect(url_for('views.home'))
             else:
                 flash('Incorrect credentials.', category='error')
@@ -68,7 +81,14 @@ def create_account():
             flash('An account with that email already exists.', category='error')
             
         else:
-            new_user = User(email=email, firstName=firstName, lastName=lastName, password=generate_password_hash(password))
+            
+            #checks list of admin emails for the entered email to give admin status
+            if (email in ADMINS):
+                is_admin = True
+            else:
+                is_admin = False
+
+            new_user = User(email=email, firstName=firstName, lastName=lastName, password=generate_password_hash(password), is_admin=is_admin)
 
             db.session.add(new_user)
             db.session.commit()

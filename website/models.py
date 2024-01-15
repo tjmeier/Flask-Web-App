@@ -14,8 +14,10 @@ class Note(db.Model):
 
 
 class User(db.Model, UserMixin):
+
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True)
+    is_admin = db.Column(db.Boolean)
     password = db.Column(db.String(150))
     firstName = db.Column(db.String(150))
     lastName = db.Column(db.String(150))

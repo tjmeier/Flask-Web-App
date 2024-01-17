@@ -38,16 +38,3 @@ def delete_note():
 
 
 
-@views.route('/admin', methods=['GET', 'POST'])
-@login_required
-def admin():
-    if (current_user.is_admin):
-        data = request.form
-        
-        if request.method == 'POST':
-            pass
-
-        return render_template("admin.html", user=current_user)
-
-    else:
-        return redirect(url_for('views.home'))

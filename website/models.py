@@ -16,11 +16,49 @@ class Note(db.Model):
 
 class User(db.Model, UserMixin):
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True) #primary key means it's the id
     email = db.Column(db.String(150), unique=True)
     is_admin = db.Column(db.Boolean)
     password = db.Column(db.String(150))
     firstName = db.Column(db.String(150))
     lastName = db.Column(db.String(150))
-    #date_joined = db.Column(db.DateTime(timezone=True), default=func.now())
+    datetime_joined = db.Column(db.DateTime(timezone=True), default=func.now())
+    
+    role = db.Column(db.String(150))
+
+    myPhoneNumber = db.Column(db.String(50))
+    myStreetAddress = db.Column(db.String(150))
+    myCity = db.Column(db.String(100))
+    myState = db.Column
+
+
     notes = db.relationship('Note') #stores all notes associated with each user, (same name as class with exactly same casing)
+    jobsWorked = db.relationship('Job') #stores all archived job
+    # EVENTUALLY MAKE THE ID OF THE ACTIVE_JOBS CLASS
+
+
+#still needs more work, split into ArchivedJobs and ActiveJobs, and active jobs can have multiple users associated with it
+class Job(db.Model):
+    id = db.Column(db.Integer, primary_key=True) #id
+    datetime_clockin = db.Column(db.DateTime(timezone=True))
+    datetime_clockout = db.Column(db.DateTime(timezone=True))
+    is_active = db.Column(db.Boolean, default=True)
+    is_approved = db.Column(db.Boolean, default=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id')) 
+
+class Client(db.Model):
+    id = db.Column(db.Integer, primary_key=True) #id
+    
+    firstName = db.Column(db.String(150))
+    lastName = db.Column(db.String(150))
+    
+    email = db.Column(db.String(150), unique=True)
+
+    myPhoneNumber = db.Column(db.String(50))
+    myStreetAddress = db.Column(db.String(150))
+    myCity = db.Column(db.String(100))
+    myState = db.Column
+
+    jobsReceived = db.relationship('Job')

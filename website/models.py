@@ -3,6 +3,7 @@ from . import db #imports database 'db' from the current directory defined in __
 from flask_login import UserMixin #allows us to make a user object based on the login
 from sqlalchemy.sql import func
 
+
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     data = db.Column(db.String(10000))
@@ -21,4 +22,5 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150))
     firstName = db.Column(db.String(150))
     lastName = db.Column(db.String(150))
+    #date_joined = db.Column(db.DateTime(timezone=True), default=func.now())
     notes = db.relationship('Note') #stores all notes associated with each user, (same name as class with exactly same casing)

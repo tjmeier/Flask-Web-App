@@ -10,9 +10,9 @@ ADMINS = {
 }
 
 
-auth = Blueprint('auth', __name__)
+views_auth = Blueprint('views_auth', __name__)
 
-@auth.route('/login', methods=['GET', 'POST']) #by default, it only accepts HTTP get requests
+@views_auth.route('/login', methods=['GET', 'POST']) #by default, it only accepts HTTP get requests
 def login():
     data = request.form
 
@@ -20,6 +20,7 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
         user = User.query.filter_by(email=email).first()
+
 
         if user:
             #if the user exists, checks the password hash with the entered password
@@ -45,7 +46,7 @@ def login():
 
 
 
-@auth.route('/create-account', methods=['GET', 'POST'])
+@views_auth.route('/create-account', methods=['GET', 'POST'])
 def create_account():
 
     data = request.form
@@ -106,8 +107,8 @@ def create_account():
 
 
 
-@auth.route('/logout')
+@views_auth.route('/logout')
 @login_required
 def logout():
     logout_user() #flask_login function to log out the current user
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('views_auth.login'))

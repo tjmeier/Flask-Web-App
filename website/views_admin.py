@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
+from .models import User
 
 from . import db #imports database 'db' from the current directory defined in __init__.py
 import json
@@ -18,4 +19,6 @@ def home():
         if request.method == 'POST':
             pass
 
-        return render_template("admin.html", user=current_user)
+
+
+        return render_template("admin.html", user=current_user, all_users=User)

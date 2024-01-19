@@ -107,6 +107,73 @@ def create_account():
 
 
 
+
+@views_auth.route('/edit-account', methods=['GET', 'POST'])
+def edit_account():
+
+    data = request.form
+
+    if request.method == 'POST':
+
+        
+        #Changing your password
+        if request.form['btn'] == 'change-password':
+            passwordOld = request.form.get('password-old')
+            passwordNew = request.form.get('password-new')
+            passwordNewConfirm = request.form.get('password-new-confirm')
+
+
+
+            if len(passwordNew) < 7:
+                flash('Password must be at least 7 characters.', category='error')
+                
+            elif passwordNew != passwordNewConfirm:
+                flash('The confirmed password must match.', category='error')
+
+            elif not check_password_hash(current_user.password, passwordOld):
+                flash('The old password is incorrect.', category='error')
+
+
+            else:
+                current_user.password = generate_password_hash(passwordNew)
+                db.session.commit()
+                flash('Password changed successfully!', category='success')
+                return redirect(url_for('views.home'))
+
+
+        #Updating user information
+        if request.form['btn'] == 'update':
+            email = request.form.get('email')
+            firstName = request.form.get('first')
+            lastName = request.form.get('last')            
+
+
+            if len(email) < 4:
+                flash('Email must be at least 4 characters.', category='error')
+                
+            elif len(firstName) < 2:
+                flash('First name must be at least 2 characters.', category='error')
+                
+            elif len(lastName) < 2:
+                flash('Last name must be at least 2 characters.', category='error')
+                
+            else:
+                
+                current_user.email = email
+                current_user.firstName = firstName
+                current_user.lastName = lastName
+
+                db.session.commit()
+
+                flash('Account information successfully updated!')
+                
+                return redirect(url_for('views.home')) 
+
+
+    return render_template("edit_account.html", user=current_user)
+
+
+
 @views_auth.route('/logout')
 @login_required
 def logout():

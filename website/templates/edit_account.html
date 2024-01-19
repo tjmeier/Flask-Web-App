@@ -1,0 +1,55 @@
+{% extends "base.html" %} <!-- extends base.html and allows any blocks to be overridden here-->
+{% block title %}Edit Account{% endblock %}
+
+<!-- content that we want displayed on create account page goes here-->
+{% block content %}
+
+<br/>
+
+<form method="POST"> <!-- HTTP post-->
+  <h3 align="center">Your Information</h3>
+  <div class="form-group">
+        <label for="email">Email Address</label>
+            <!--recall that you always want 'for' and 'id' to be linked with same name, 
+            'name' will be used to pass to backend-->
+        <input type="email" class="form-control" id="email" name="email" value="{{user.email}}" />
+
+        <label for="first">First Name</label>
+        <input type="text" class="form-control" id="first" name="first" value="{{user.firstName}}" />     
+
+        <label for="email">Last Name</label>
+        <input type="text" class="form-control" id="last" name="last" value="{{user.lastName}}" />
+
+        <label for="email">Phone Number</label>
+        <input type="email" class="form-control" id="email" name="email" value="{{user.phoneNumber}}" />
+
+        <label for="email">Role</label>
+        <input type="email" class="form-control" id="email" name="email" value="{{user.role}}" />
+
+        <br/>
+
+        <button type="submit" class="btn btn-primary" name="btn" value="update">Update</button>
+  </div>
+  
+  <br/>
+
+  <h3 align="center">Change your Password</h3>
+  <div class="form-group">
+
+      <label for="password">Old Password</label>
+      <input type="password" class="form-control" id="password-old" name="password-old" placeholder="Enter old password"/>
+
+      <label for="password">New Password</label>
+      <input type="password" class="form-control" id="password-new" name="password-new" placeholder="Enter new password"/>
+
+      <label for="password-confirm">Confirm Password</label>
+      <input type="password" class="form-control" id="password-new-confirm" name="password-new-confirm" placeholder="Confirm new password"/>
+
+      <br />
+
+      <button type="submit" class="btn btn-danger" name="btn" value="change-password">Change Password</button>
+
+  </div>
+</form>
+
+{% endblock %}

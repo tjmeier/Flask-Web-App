@@ -24,13 +24,13 @@ class User(db.Model, UserMixin):
     lastName = db.Column(db.String(150))
     datetime_joined = db.Column(db.DateTime(timezone=True), default=func.now())
     
-    role = db.Column(db.String(150))
+    role = db.Column(db.String(150), default="Not Specified")
 
-    myPhoneNumber = db.Column(db.String(50))
-    myStreetAddress = db.Column(db.String(150))
-    myCity = db.Column(db.String(100))
-    myState = db.Column
-
+    phoneNumber = db.Column(db.String(50), default="") 
+    streetAddress = db.Column(db.String(150))
+    city = db.Column(db.String(100))
+    state = db.Column(db.String(5))
+    zipcode = db.Column(db.String(10))
 
     notes = db.relationship('Note') #stores all notes associated with each user, (same name as class with exactly same casing)
     jobsWorked = db.relationship('Job') #stores all archived job
@@ -53,12 +53,14 @@ class Client(db.Model):
     
     firstName = db.Column(db.String(150))
     lastName = db.Column(db.String(150))
+    company = db.Column(db.String(150))
     
     email = db.Column(db.String(150), unique=True)
 
-    myPhoneNumber = db.Column(db.String(50))
-    myStreetAddress = db.Column(db.String(150))
-    myCity = db.Column(db.String(100))
-    myState = db.Column
+    phoneNumber = db.Column(db.String(50))
+    streetAddress = db.Column(db.String(150))
+    city = db.Column(db.String(100))
+    state = db.Column(db.String(5))
+    zipcode = db.Column(db.String(10))
 
     jobsReceived = db.relationship('Job')

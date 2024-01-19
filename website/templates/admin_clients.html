@@ -1,0 +1,77 @@
+{% extends "admin_base.html" %} 
+{% block title %}Clients{% endblock %}
+
+{% block content %}
+<br/>
+
+<h1 align="center">Clients Table</h1>
+
+<br/>
+<table class="table table-striped table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">First</th>
+        <th scope="col">Last</th>
+        <th scope="col">Email</th>
+        <th scope="col">Phone Number</th>
+        <th scope="col">Company</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+        {%for a_client in all_clients %}
+          <tr >
+            <td>{{a_client.firstName}}</td>
+            <td>{{a_client.lastName}}</td>
+            <td>{{a_client.email}}</td>
+            <td>{{a_client.phoneNumber}}</td>
+            <td>{{a_client.company}}</td>
+            <td><a href="/admin/client/{{a_client.id}}" class="btn btn-outline-success btn-sm active" role="button" aria-pressed="true">View Client</a></td>
+          </tr>
+
+
+        {% endfor %}
+    </tbody>
+</table>
+
+<br/>
+<br/>
+<br/>
+
+<form method="POST"> <!-- HTTP post-->
+
+    <h3 align="center">Add Client</h3>
+    <div class="form-group">
+
+        <label for="first">First Name</label>
+        <!--recall that you always want 'for' and 'id' to be linked with same name, 
+        'name' will be used to pass to backend-->
+        <input type="text" class="form-control" id="first" name="first" placeholder="Enter client first name"/>     
+
+        <label for="last">Last Name</label>
+        <input type="text" class="form-control" id="last" name="last" placeholder="Enter client last name"/>
+
+        <label for="email">Email Address</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Enter client email"/>
+
+        <label for="phone-number">Phone Number</label>
+        <input type="tel" class="form-control" id="phone-number" name="phone-number" placeholder="Enter client phone number" />
+
+        <label for="company">Last Name</label>
+        <input type="text" class="form-control" id="company" name="company" placeholder="Enter client company"/>
+
+        <br />
+
+        <button type="submit" class="btn btn-primary">Add</button>
+    </div>
+</form>
+
+
+
+
+
+
+
+
+{% endblock %}

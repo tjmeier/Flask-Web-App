@@ -5,6 +5,57 @@
 {% block content %}
 <br/>
 
-<h1 align="center">User: {{see_user.firstName}} {{see_user.lastName}}</h1>
+<div align="center">
+
+    <h3>{{see_user.firstName}} {{see_user.lastName}}</h3>
+
+    <br/>
+
+
+    <table class="table table-sm" style="max-width: 600px;">
+
+        <tbody>
+            <!-- <tr>
+            <td class="font-weight-light" scope="row">First</td>
+            <td>{{see_user.firstName}}</td>
+            </tr>
+            <tr>
+            <td class="font-weight-light"  scope="row">Last</td>
+            <td>{{see_user.lastName}}</td>
+            </tr> -->
+            <tr> 
+                <td class="font-weight-light"  scope="row">Email</td>
+                <td>{{see_user.email}}</td>
+                </tr>
+            <tr>
+                <td class="font-weight-light"  scope="row">Phone Number</td>
+                <td>{{see_user.phoneNumber}}</td>
+            </tr>
+            <tr>
+                <td class="font-weight-light"  scope="row">Role</td>
+                <td>{{see_user.role}}</td>
+            </tr>
+            <tr>
+                <td class="font-weight-light"  scope="row">Date Joined</td>
+                <td class="text-secondary">{{see_user.datetime_joined}} UTC</td>
+            </tr>
+            <tr>
+                <td class="font-weight-light"  scope="row">User ID</td>
+                <td class="text-secondary">{{see_user.id}}</td>
+            </tr>
+            <tr>
+                <td class="font-weight-light"  scope="row">Admin Access</td>
+
+                {% if see_user.is_admin %}
+                    <td class="text-danger">Yes</td>
+                {% else %}
+                    <td class="text-secondary">No</td>
+                {% endif %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
 
 {% endblock %}

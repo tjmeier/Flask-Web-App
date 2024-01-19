@@ -64,3 +64,4 @@ class Client(db.Model):
     zipcode = db.Column(db.String(10))
 
     jobsReceived = db.relationship('Job')
+    datetime_added = db.Column(db.DateTime(timezone=True), default=func.now())

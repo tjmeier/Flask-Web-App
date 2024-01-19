@@ -1,0 +1,45 @@
+{% extends "admin_base.html" %} <!-- extends base.html and allows any blocks to be overridden here-->
+{% block title %}User {{user.id}}{% endblock %}
+
+<!-- NOT DONEcontent that we want displayed on home page goes here-->
+{% block content %}
+<br/>
+
+<div align="center">
+
+    <h3>{{see_client.firstName}} {{see_client.lastName}}</h3>
+
+    <br/>
+
+
+    <table class="table table-sm" style="max-width: 600px;">
+
+        <tbody>
+            <tr> 
+                <td class="font-weight-light"  scope="row">Email</td>
+                <td>{{see_client.email}}</td>
+                </tr>
+            <tr>
+                <td class="font-weight-light"  scope="row">Phone Number</td>
+                <td>{{see_client.phoneNumber}}</td>
+            </tr>
+            <tr>
+                <td class="font-weight-light"  scope="row">Company</td>
+                <td>{{see_client.company}}</td>
+            </tr>
+            <tr>
+                <td class="font-weight-light"  scope="row">Date Added</td>
+                <td class="text-secondary">{{see_client.datetime_added}} UTC</td>
+            </tr>
+            <tr>
+                <td class="font-weight-light"  scope="row">Client ID</td>
+                <td class="text-secondary">{{see_client.id}}</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+
+
+{% endblock %}

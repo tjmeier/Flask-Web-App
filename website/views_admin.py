@@ -51,5 +51,18 @@ def users():
 
         all_users = User.query.order_by(User.lastName)
 
-        return render_template("users.html", user=current_user, all_users=all_users)
+        return render_template("admin_users.html", user=current_user, all_users=all_users)
 
+@views_admin.route('/user/<int:see_user_id>', methods=['GET', 'POST'])
+@login_required
+def user(see_user_id):
+    
+    if (not current_user.is_admin):
+        return redirect(url_for('views.home'))
+    else:
+        see_user = User.query.filter_by(id=see_user_id).first()
+
+        if request.method == 'POST':
+            pass
+
+        return render_template("admin_see_user.html", user=current_user, see_user=see_user)

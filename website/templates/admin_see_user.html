@@ -1,11 +1,10 @@
 {% extends "admin_base.html" %} <!-- extends base.html and allows any blocks to be overridden here-->
-{% block title %}Users{% endblock %}
+{% block title %}User {{user.id}}{% endblock %}
 
-<!-- content that we want displayed on home page goes here-->
+<!-- NOT DONEcontent that we want displayed on home page goes here-->
 {% block content %}
+<br/>
 
-<h1 align="center">User: {{user.firstName}} {{user.lastName}}</h1>
-
-{% extends "user_base.html" %}
+<h1 align="center">User: {{see_user.firstName}} {{see_user.lastName}}</h1>
 
 {% endblock %}

@@ -3,9 +3,10 @@
 
 <!-- content that we want displayed on home page goes here-->
 {% block content %}
+<br/>
 
 <h1 align="center">Users Table</h1>
-<p>Select a user row to see more.</p>
+
 <br/>
 <table class="table table-striped table-hover">
     <thead class="thead-dark">
@@ -13,20 +14,26 @@
         <th scope="col">First</th>
         <th scope="col">Last</th>
         <th scope="col">Email</th>
+        <th scope="col">Phone Number</th>
         <th scope="col">Role</th>
         <th scope="col">Active Job</th>
+        <th scope="col"></th>
       </tr>
     </thead>
 
     <tbody>
         {%for a_user in all_users %}
-        <tr>
+          <tr >
             <td>{{a_user.firstName}}</td>
             <td>{{a_user.lastName}}</td>
             <td>{{a_user.email}}</td>
+            <td>{{a_user.phoneNumber}}</td>
             <td>{{a_user.role}}</td>
-            <td>a_user.activeJob tbd</td>
-        </tr>
+            <td>{{a_user.activeJob}}</td>
+            <td><a href="/admin/user/{{a_user.id}}" class="btn btn-outline-success btn-sm active" role="button" aria-pressed="true">View</a></td>
+          </tr>
+
+
         {% endfor %}
     </tbody>
 </table>

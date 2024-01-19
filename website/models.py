@@ -24,9 +24,9 @@ class User(db.Model, UserMixin):
     lastName = db.Column(db.String(150))
     datetime_joined = db.Column(db.DateTime(timezone=True), default=func.now())
     
-    role = db.Column(db.String(150), default="Not Specified")
+    role = db.Column(db.String(150), default="General")
 
-    phoneNumber = db.Column(db.String(50), default="") 
+    phoneNumber = db.Column(db.String(50), default="Not Specified") 
     streetAddress = db.Column(db.String(150))
     city = db.Column(db.String(100))
     state = db.Column(db.String(5))

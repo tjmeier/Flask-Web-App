@@ -121,8 +121,7 @@ def edit_account():
             passwordOld = request.form.get('password-old')
             passwordNew = request.form.get('password-new')
             passwordNewConfirm = request.form.get('password-new-confirm')
-
-
+        
 
             if len(passwordNew) < 7:
                 flash('Password must be at least 7 characters.', category='error')
@@ -145,7 +144,11 @@ def edit_account():
         if request.form['btn'] == 'update':
             email = request.form.get('email')
             firstName = request.form.get('first')
-            lastName = request.form.get('last')            
+            lastName = request.form.get('last') 
+            phoneNumber = request.form.get('phone-number')
+            role = request.form.get('role')           
+
+            user = User.query.filter_by(email=email).first()
 
 
             if len(email) < 4:
@@ -156,16 +159,29 @@ def edit_account():
                 
             elif len(lastName) < 2:
                 flash('Last name must be at least 2 characters.', category='error')
+
+            elif len(phoneNumber) < 10:
+                flash('Phone number must be at least 10 characters.', category='error')
+
+            
+            elif len(role) < 2:
+                flash('Phone number must be at least 2 characters.', category='error')
+            
+            elif user and not user.email == current_user.email:
+                flash('An account with that email already exists.', category='error')
+            
                 
             else:
                 
                 current_user.email = email
                 current_user.firstName = firstName
                 current_user.lastName = lastName
+                current_user.phoneNumber = phoneNumber
+                current_user.role = role
 
                 db.session.commit()
 
-                flash('Account information successfully updated!')
+                flash('Account information successfully updated!', category='success')
                 
                 return redirect(url_for('views.home')) 
 

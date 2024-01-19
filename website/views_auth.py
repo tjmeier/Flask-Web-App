@@ -57,7 +57,8 @@ def create_account():
         lastName = request.form.get('last')
         password = request.form.get('password')
         passwordConfirm = request.form.get('password-confirm')
-        
+        phoneNumber = request.form.get('phone-number')
+
         
         user = User.query.filter_by(email=email).first()
         
@@ -71,6 +72,9 @@ def create_account():
             
         elif len(lastName) < 2:
             flash('Last name must be at least 2 characters.', category='error')
+        
+        elif len(phoneNumber) < 10:
+            flash('Phone number must be at least 10 characters.', category='error')
             
         elif len(password) < 7:
             flash('Password must be at least 7 characters.', category='error')
@@ -89,7 +93,7 @@ def create_account():
             else:
                 is_admin = False
 
-            new_user = User(email=email, firstName=firstName, lastName=lastName, password=generate_password_hash(password), is_admin=is_admin)
+            new_user = User(email=email, phoneNumber=phoneNumber, firstName=firstName, lastName=lastName, password=generate_password_hash(password), is_admin=is_admin)
 
             db.session.add(new_user)
             db.session.commit()

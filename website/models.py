@@ -33,12 +33,13 @@ class User(db.Model, UserMixin):
     zipcode = db.Column(db.String(10))
 
     notes = db.relationship('Note') #stores all notes associated with each user, (same name as class with exactly same casing)
-    jobsWorked = db.relationship('Job') #stores all archived job
+    activeShift_id = db.Column(db.Integer, default=0)
+    shiftsWorked = db.relationship('Shift') #stores all archived job
     # EVENTUALLY MAKE THE ID OF THE ACTIVE_JOBS CLASS
 
 
 #still needs more work, split into ArchivedJobs and ActiveJobs, and active jobs can have multiple users associated with it
-class Job(db.Model):
+class Shift(db.Model):
     id = db.Column(db.Integer, primary_key=True) #id
     datetime_clockin = db.Column(db.DateTime(timezone=True))
     datetime_clockout = db.Column(db.DateTime(timezone=True))
@@ -47,6 +48,8 @@ class Job(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
     client_id = db.Column(db.Integer, db.ForeignKey('client.id')) 
+    note = db.Column(db.String(10000), default="")
+
 
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True) #id
@@ -63,5 +66,5 @@ class Client(db.Model):
     state = db.Column(db.String(5))
     zipcode = db.Column(db.String(10))
 
-    jobsReceived = db.relationship('Job')
+    shiftsReceived = db.relationship('Shift')
     datetime_added = db.Column(db.DateTime(timezone=True), default=func.now())

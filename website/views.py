@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from .models import Note
+from .models import Note, Client, Shift
 from . import db #imports database 'db' from the current directory defined in __init__.py
 import json
 
@@ -23,7 +23,10 @@ def home():
             db.session.commit()
             flash('Note added!', category='success')
 
-    return render_template("home.html", user=current_user)
+    all_clients = Client.query.order_by(Client.lastName)
+
+
+    return render_template("home.html", user=current_user, all_clients=all_clients)
 
 @views.route('/delete-note', methods=['POST'])
 def delete_note():

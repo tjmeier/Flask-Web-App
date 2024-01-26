@@ -5,6 +5,69 @@
 {% block content %}
 <br/>
 
+
+<br/>
+
+<div class="container p-3 my-3 border">
+    <h1 align="center">New Shift</h1>
+    <form method="POST"> <!-- HTTP post-->
+        <div class="form-group">
+
+            {% if user.activeShift_id == 0 %}
+                <label for="client">Choose a client</label>
+                <select id="client" name="client" class="form-select" aria-label="Default select example">
+                    {% for client in all_clients %}
+                        <option value="{{client.id}}">{{client.firstName}} {{client.lastName}}</option>
+                    {% endfor %}
+                </select>
+                
+                <br/>
+
+                <button type="submit" class="btn btn-success btn-lg" name="btn" value="clockin">Clock In</button>
+                
+            {% else %}
+                <label for="client">Change the client</label>
+                <select id="client" name="client" class="form-select" aria-label="Default select example">
+                    {% for client in all_clients %}
+                        <option value="{{client.id}}">{{client.firstName}} {{client.lastName}}</option>
+                    {% endfor %}
+                </select>
+
+                <br/>
+
+                <button type="submit" class="btn btn-danger btn-lg" name="btn" value="clockout">Clock Out</button>
+            {% endif %}
+
+        
+            
+
+
+        <label for="email">Email Address</label>
+            <!--recall that you always want 'for' and 'id' to be linked with same name, 
+            'name' will be used to pass to backend-->
+        <input type="email" class="form-control" id="email" name="email" value="{{user.email}}" />
+
+        <label for="first">First Name</label>
+        <input type="text" class="form-control" id="first" name="first" value="{{user.firstName}}" />     
+
+        <label for="last">Last Name</label>
+        <input type="text" class="form-control" id="last" name="last" value="{{user.lastName}}" />
+
+        <label for="phone-number">Phone Number</label>
+        <input type="tel" class="form-control" id="phone-number" name="phone-number" value="{{user.phoneNumber}}" />
+
+        <label for="role">Role</label>
+        <input type="text" class="form-control" id="role" name="role" value="{{user.role}}" />
+
+        <br/>
+
+        <button type="submit" class="btn btn-primary" name="btn" value="update">Update</button>
+        </div>
+    </form>
+</div>
+
+
+
 <h1 align="center">Notes</h1>
 <ul class="list-group list-group-flush" id="notes">
     {% for note in user.notes %}

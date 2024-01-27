@@ -9,10 +9,23 @@
     <form method="POST"> <!-- HTTP post-->
         <div class="form-group" align="center">
 
-            {% if user.activeShift_id == 0 %}
+            {% if user.activeShift_id == 0 %} <!-- user is currently clocked out-->
                 <h1>New Shift</h1>
 
                 <br/>
+
+                <button type="submit" style="width: 400px; height: 100px" class="btn btn-success btn-lg" name="btn" value="clockin">
+                    <h4 class="font-weight-bold">Clock In</h4>
+                </button>
+
+                <br/>
+                <br/>
+
+                <h3 class="text-secondary">{{current_time12h}}</h3>
+                <h3 class="text-secondary">{{current_weekday}} {{current_date}}</h3>
+
+                <br/>
+
 
                 <label for="client-id">Choose a client</label>
                 <select id="client-id" name="client-id" class="form-select form-select-lg">
@@ -21,24 +34,13 @@
                     {% endfor %}
                 </select>
                 
-                <br/>
 
-                <button type="submit" style="width: 400px; height: 100px" class="btn btn-success btn-lg" name="btn" value="clockin">
-                    <h4 class="font-weight-bold">Clock In</h4>
-                </button>
 
-            {% else %}
+            {% else %} <!-- user is currently clocked in-->
                 <h1>Current Shift</h1>
 
-                <br/>
-
-                <label for="client-id">Change client</label>
-                <select id="client-id" name="client-id" class="form-select form-select-lg">
-                    {% for client in all_clients %}
-                        <option value="{{client.id}}">{{client.firstName}} {{client.lastName}}</option>
-                    {% endfor %}
-                </select>
-
+                <h1 class="text-success">{{shift_totaltime}}</h1>
+                
                 <br/>
 
                 <button type="submit" style="width: 400px; height: 100px" class="btn btn-danger btn-lg" name="btn" value="clockout">
@@ -47,18 +49,70 @@
 
 
                 <br/>
+                <br/>
 
+                <h3 class="text-secondary">{{current_time12h}}</h3>
+                <h3 class="text-secondary">{{current_weekday}} {{current_date}}</h3>
 
-                <label for="time-in">Time In</label>
-                <input type="time" class="form-control" id="time-in" name="time-in" placeholder="Time in"/>
-    
-                <label for="time-out">Time Out</label>
-                <input type="time" class="form-control" id="time-out" name="time-out" placeholder="Time out"/>
+                <br/>
+                <br/>
 
+                <h3>Update Shift Details</h3>
+                <p  style="width: 400px" class="text-secondary">
+                    Press 'Update Shift' to save new information for your current shift. 
+                    Press 'Clock Out' to end your shift and submit the following information.
+                </p>
+ 
 
+                <br/>
+
+                <label for="client-id">Change client</label>
+                <select id="client-id" name="client-id" class="form-select form-select-lg">
+                    <option value="{{shift_client.id}}">Currently - {{shift_client.firstName}} {{shift_client.lastName}}</option>
+                    {% for client in all_clients %}
+                        <option value="{{client.id}}">{{client.firstName}} {{client.lastName}}</option>
+                    {% endfor %}
+                </select>
+
+                <br/>
+                <br/>
+                <br/>
+
+                <div align="center" class = "input-group justify-content-center">
+                    <div class = "col-xs-6">
+                        <label for="time-in">Time In</label>
+                        <input type="time" class="form-control" id="time-in" name="time-in" value="{{shift_timein24h}}"/> <!-- html time input type works with 24h time-->
+                    </div>
+                    <div class="col-xs-6">
+                        <label for="date-in">Date In</label>
+                        <input type="date" class="form-control" id="date-in" name="date-in" value="{{shift_dateymd}}"/> <!-- html time input type works with YYYY-MM-DD date-->
+                    </div>
+                </div>
+
+                <br/>
+
+                <div align="center" class = "input-group justify-content-center">
+                    <div class="col-xs-6">
+                        <label for="time-out">Time Out</label>
+                        <input type="time" class="form-control" id="time-out" name="time-out" value="{{current_time24h}}"/>
+                    </div>
+                    <div class="col-xs-6">
+                        <label for="date-out">Date Out</label>
+                        <input type="date" class="form-control" id="date-out" name="date-out" value="{{current_dateymd}}"/>
+                    </div>
+                </div>
+
+                <br/>
+                <br/>
+                <br/>
+
+                <label for="shift-note">Shift Notes</label>
+                <textarea style="width: 400px" name="shift-note" id="shift-note" class="form-control">{{shift_note}}</textarea>
+
+                <br/>
+
+                
                 <button type="submit" class="btn btn-primary" name="btn" value="current-shift-update">Update Shift</button>
-
-
 
             {% endif %}
 
@@ -70,6 +124,7 @@
     </form>
 </div>
 
+<!-- users personal notes page-->
 
 <div class="container p-3 my-3 border shadow bg-white rounded">
     <h1 align="center">Your Notes Page</h1>

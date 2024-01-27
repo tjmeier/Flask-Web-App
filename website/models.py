@@ -41,7 +41,7 @@ class User(db.Model, UserMixin):
 #still needs more work, split into ArchivedJobs and ActiveJobs, and active jobs can have multiple users associated with it
 class Shift(db.Model):
     id = db.Column(db.Integer, primary_key=True) #id
-    datetime_clockin = db.Column(db.DateTime(timezone=True))
+    datetime_clockin = db.Column(db.DateTime(timezone=True), default=func.now())
     datetime_clockout = db.Column(db.DateTime(timezone=True))
     is_active = db.Column(db.Boolean, default=True)
     is_approved = db.Column(db.Boolean, default=False)

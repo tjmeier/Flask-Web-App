@@ -13,15 +13,42 @@ def home():
     data = request.form
     
     if request.method == 'POST':
-        note = request.form.get('note')
 
-        if len(note) < 1:
-            flash('Note must contain at least one character.', category="error")
-        else:
-            new_note = Note(data=note, user_id=current_user.id)
-            db.session.add(new_note)
+        if request.form['btn'] == 'clockin':
+            
+            shift_client_id = request.form.get('client-id')
+
+            #create a new shift
+            new_shift = Shift(user_id = current_user.id, client_id = shift_client_id)
+            db.session.add(new_shift)
             db.session.commit()
-            flash('Note added!', category='success')
+
+            flash('You successfully clocked in!', category='success')
+
+            #update user's active shift
+            current_user.activeShift_id = new_shift.id
+            db.session.commit()
+
+            #reload home page
+            return redirect(url_for('views.home'))
+
+        elif request.form['btn'] == 'clockout':
+            pass
+        elif request.form['btn'] == 'current-shift-update':
+            pass
+        elif request.form['btn'] == 'notes':
+            note = request.form.get('note')
+
+            if len(note) < 1:
+                flash('Note must contain at least one character.', category="error")
+            else:
+                new_note = Note(data=note, user_id=current_user.id)
+                db.session.add(new_note)
+                db.session.commit()
+                flash('Note added!', category='success')
+
+
+
 
     all_clients = Client.query.order_by(Client.lastName)
 

@@ -4,20 +4,21 @@
 <!-- content that we want displayed on home page goes here-->
 {% block content %}
 <br/>
+<div class="container p-3 my-3 border shadow bg-white rounded">
+    <form method="POST"> <!-- HTTP post-->
+        <h3 align="center">Login</h3>
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email"/>
 
-<form method="POST"> <!-- HTTP post-->
-    <h3 align="center">Login</h3>
-    <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email"/>
 
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Enter password"/>
 
-        <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password"/>
+            <br />
 
-        <br />
-
-        <button type="submit" class="btn btn-success">Login</button>
-    </div>
-</form>
+            <button type="submit" class="btn btn-success">Login</button>
+        </div>
+    </form>
+</div>
 {% endblock %}

@@ -5,17 +5,17 @@
 {% block content %}
 <br/>
 
-
-<br/>
-
-<div class="container p-3 my-3 border">
-    <h1 align="center">New Shift</h1>
+<div class="container p-3 my-3 border shadow bg-white rounded">
     <form method="POST"> <!-- HTTP post-->
-        <div class="form-group">
+        <div class="form-group" align="center">
 
             {% if user.activeShift_id == 0 %}
-                <label for="client">Choose a client</label>
-                <select id="client" name="client" class="form-select" aria-label="Default select example">
+                <h1>New Shift</h1>
+
+                <br/>
+
+                <label for="client-id">Choose a client</label>
+                <select id="client-id" name="client-id" class="form-select form-select-lg">
                     {% for client in all_clients %}
                         <option value="{{client.id}}">{{client.firstName}} {{client.lastName}}</option>
                     {% endfor %}
@@ -23,11 +23,17 @@
                 
                 <br/>
 
-                <button type="submit" class="btn btn-success btn-lg" name="btn" value="clockin">Clock In</button>
-                
+                <button type="submit" style="width: 400px; height: 100px" class="btn btn-success btn-lg" name="btn" value="clockin">
+                    <h4 class="font-weight-bold">Clock In</h4>
+                </button>
+
             {% else %}
-                <label for="client">Change the client</label>
-                <select id="client" name="client" class="form-select" aria-label="Default select example">
+                <h1>Current Shift</h1>
+
+                <br/>
+
+                <label for="client-id">Change client</label>
+                <select id="client-id" name="client-id" class="form-select form-select-lg">
                     {% for client in all_clients %}
                         <option value="{{client.id}}">{{client.firstName}} {{client.lastName}}</option>
                     {% endfor %}
@@ -35,59 +41,59 @@
 
                 <br/>
 
-                <button type="submit" class="btn btn-danger btn-lg" name="btn" value="clockout">Clock Out</button>
+                <button type="submit" style="width: 400px; height: 100px" class="btn btn-danger btn-lg" name="btn" value="clockout">
+                    <h4 class="font-weight-bold">Clock Out</h4>
+                </button>
+
+
+                <br/>
+
+
+                <label for="time-in">Time In</label>
+                <input type="time" class="form-control" id="time-in" name="time-in" placeholder="Time in"/>
+    
+                <label for="time-out">Time Out</label>
+                <input type="time" class="form-control" id="time-out" name="time-out" placeholder="Time out"/>
+
+
+                <button type="submit" class="btn btn-primary" name="btn" value="current-shift-update">Update Shift</button>
+
+
+
             {% endif %}
-
-        
-            
-
-
-        <label for="email">Email Address</label>
-            <!--recall that you always want 'for' and 'id' to be linked with same name, 
-            'name' will be used to pass to backend-->
-        <input type="email" class="form-control" id="email" name="email" value="{{user.email}}" />
-
-        <label for="first">First Name</label>
-        <input type="text" class="form-control" id="first" name="first" value="{{user.firstName}}" />     
-
-        <label for="last">Last Name</label>
-        <input type="text" class="form-control" id="last" name="last" value="{{user.lastName}}" />
-
-        <label for="phone-number">Phone Number</label>
-        <input type="tel" class="form-control" id="phone-number" name="phone-number" value="{{user.phoneNumber}}" />
-
-        <label for="role">Role</label>
-        <input type="text" class="form-control" id="role" name="role" value="{{user.role}}" />
 
         <br/>
 
-        <button type="submit" class="btn btn-primary" name="btn" value="update">Update</button>
+
+
         </div>
     </form>
 </div>
 
 
+<div class="container p-3 my-3 border shadow bg-white rounded">
+    <h1 align="center">Your Notes Page</h1>
+    <ul class="list-group list-group-flush" id="notes">
+        {% for note in user.notes %}
+        <li class="list-group-item">{{ note.data }}
+            <button type="button" class="close" onClick="deleteNote({{ note.id }})"> <!-- javascript to send backend request to delete note-->
+                <span aria-hidden="true">&times;</span> <!-- the x out button-->
+            </button>
+        </li>
 
-<h1 align="center">Notes</h1>
-<ul class="list-group list-group-flush" id="notes">
-    {% for note in user.notes %}
-    <li class="list-group-item">{{ note.data }}
-        <button type="button" class="close" onClick="deleteNote({{ note.id }})"> <!-- javascript to send backend request to delete note-->
-            <span aria-hidden="true">&times;</span> <!-- the x out button-->
-        </button>
-    </li>
+        {% endfor %}
+    </ul>
 
-    {% endfor %}
-</ul>
 
-<form method="POST">
-    <textarea name="note" id="note" class="form-control"></textarea>
+    <form method="POST"> <!-- HTTP post-->
+        <textarea name="note" id="note" class="form-control"></textarea>
 
-    <br />
+        <br />
 
-    <div align="center">
-        <button type="submit" class="btn btn-primary">Add Note</button>
-    </div>
-</form>
+        <div align="center">
+            <button type="submit" value="notes" name="btn" class="btn btn-primary">Add Note</button>
+        </div>
+    </form>
+</div>
 
 {% endblock %}

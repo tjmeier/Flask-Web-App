@@ -48,7 +48,7 @@ class Shift(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     is_approved = db.Column(db.Boolean, default=False)
 
-    total_hours = db.Column(db.Double, default=0.0)
+    total_hours = db.Column(db.Float, default=0.0)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
     client_id = db.Column(db.Integer, db.ForeignKey('client.id')) 

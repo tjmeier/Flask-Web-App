@@ -15,10 +15,13 @@ def create_app():
 
 
     from .views import views
-    from .auth import auth
+    from .views_auth import views_auth
+    from .views_admin import views_admin
 
     app.register_blueprint(views, url_prefix='/')
-    app.register_blueprint(auth, url_prefix='/')
+    app.register_blueprint(views_auth, url_prefix='/')
+    app.register_blueprint(views_admin, url_prefix='/admin')
+
 
     from .models import User, Note #gets specific database models that we created into the app
 
@@ -26,7 +29,7 @@ def create_app():
 
     #since a login is required, we send users who need to be logged in to the login page
     login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
+    login_manager.login_view = 'views_auth.login'
     login_manager.init_app(app)
 
     #tells login manager how to load a user

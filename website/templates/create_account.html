@@ -5,29 +5,36 @@
 {% block content %}
 
 <form method="POST"> <!-- HTTP post-->
-    <h3 align="center">Create Account</h3>
-    <div class="form-group">
-        <label for="email">Email Address</label>
+    <br/>
+    <div class="container p-3 my-3 border shadow bg-white rounded">
+        <h3 align="center">Create Account</h3>
+        <div class="form-group">
+
+            <label for="first">First Name</label>
             <!--recall that you always want 'for' and 'id' to be linked with same name, 
             'name' will be used to pass to backend-->
-        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email"/>
+            <input type="text" class="form-control" id="first" name="first" placeholder="Enter first name"/>     
 
-        <label for="first">First Name</label>
-        <input type="text" class="form-control" id="first" name="first" placeholder="Enter first name"/>     
+            <label for="last">Last Name</label>
+            <input type="text" class="form-control" id="last" name="last" placeholder="Enter last name"/>
 
-        <label for="email">Last Name</label>
-        <input type="text" class="form-control" id="last" name="last" placeholder="Enter last name"/>
+            <label for="email">Email Address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email"/>
 
-        <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password"/>
+            <label for="phone-number">Phone Number</label>
+            <input type="tel" class="form-control" id="phone-number" name="phone-number" placeholder="Enter phone number" />
 
-        <label for="password-confirm">Confirm Password</label>
-        <input type="password" class="form-control" id="password-confirm" name="password-confirm" placeholder="Confirm password"/>
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Enter password"/>
 
-        <br />
+            <label for="password-confirm">Confirm Password</label>
+            <input type="password" class="form-control" id="password-confirm" name="password-confirm" placeholder="Confirm password"/>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
+            <br />
 
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
 </form>
 
 {% endblock %}

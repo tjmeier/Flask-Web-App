@@ -3,26 +3,152 @@
 
 <!-- content that we want displayed on home page goes here-->
 {% block content %}
-<h1 align="center">Notes</h1>
-<ul class="list-group list-group-flush" id="notes">
-    {% for note in user.notes %}
-    <li class="list-group-item">{{ note.data }}
-        <button type="button" class="close" onClick="deleteNote({{ note.id }})"> <!-- javascript to send backend request to delete note-->
-            <span aria-hidden="true">&times;</span> <!-- the x out button-->
-        </button>
-    </li>
+<br/>
 
-    {% endfor %}
-</ul>
+<div class="container p-3 my-3 border shadow bg-white rounded">
+    <form method="POST"> <!-- HTTP post-->
+        <div class="form-group" align="center">
 
-<form method="POST">
-    <textarea name="note" id="note" class="form-control"></textarea>
+            {% if user.activeShift_id == 0 %} <!-- user is currently clocked out-->
+                <h1>New Shift</h1>
 
-    <br />
+                <br/>
 
-    <div align="center">
-        <button type="submit" class="btn btn-primary">Add Note</button>
-    </div>
-</form>
+                <button type="submit" style="width: 400px; height: 100px" class="btn btn-success btn-lg" name="btn" value="clockin">
+                    <h4 class="font-weight-bold">Clock In</h4>
+                </button>
+
+                <br/>
+                <br/>
+
+                <h3 class="text-secondary">{{current_time12h}}</h3>
+                <h3 class="text-secondary">{{current_weekday}} {{current_date}}</h3>
+
+                <br/>
+
+
+                <label for="client-id">Choose a client</label>
+                <select id="client-id" name="client-id" class="form-select form-select-lg">
+                    {% for client in all_clients %}
+                        <option value="{{client.id}}">{{client.firstName}} {{client.lastName}}</option>
+                    {% endfor %}
+                </select>
+                
+
+
+            {% else %} <!-- user is currently clocked in-->
+                <h1>Current Shift</h1>
+
+                <h1 class="text-success">{{shift_totaltime}}</h1>
+                
+                <br/>
+
+                <button type="submit" style="width: 400px; height: 100px" class="btn btn-danger btn-lg" name="btn" value="clockout">
+                    <h4 class="font-weight-bold">Clock Out</h4>
+                </button>
+
+
+                <br/>
+                <br/>
+
+                <h3 class="text-secondary">{{current_time12h}}</h3>
+                <h3 class="text-secondary">{{current_weekday}} {{current_date}}</h3>
+
+                <br/>
+                <br/>
+
+                <h3>Update Shift Details</h3>
+                <p  style="width: 400px" class="text-secondary">
+                    Press 'Update Shift' to save new information for your current shift. 
+                    Press 'Clock Out' to end your shift and submit the following information.
+                </p>
+ 
+
+                <br/>
+
+                <label for="client-id">Change client</label>
+                <select id="client-id" name="client-id" class="form-select form-select-lg">
+                    <option value="{{shift_client.id}}">Currently - {{shift_client.firstName}} {{shift_client.lastName}}</option>
+                    {% for client in all_clients %}
+                        <option value="{{client.id}}">{{client.firstName}} {{client.lastName}}</option>
+                    {% endfor %}
+                </select>
+
+                <br/>
+                <br/>
+                <br/>
+
+                <div align="center" class = "input-group justify-content-center">
+                    <div class = "col-xs-6">
+                        <label for="time-in">Time In</label>
+                        <input type="time" class="form-control" id="time-in" name="time-in" value="{{shift_timein24h}}"/> <!-- html time input type works with 24h time-->
+                    </div>
+                    <div class="col-xs-6">
+                        <label for="date-in">Date In</label>
+                        <input type="date" class="form-control" id="date-in" name="date-in" value="{{shift_dateymd}}"/> <!-- html time input type works with YYYY-MM-DD date-->
+                    </div>
+                </div>
+
+                <br/>
+
+                <div align="center" class = "input-group justify-content-center">
+                    <div class="col-xs-6">
+                        <label for="time-out">Time Out</label>
+                        <input type="time" class="form-control" id="time-out" name="time-out" value="{{current_time24h}}"/>
+                    </div>
+                    <div class="col-xs-6">
+                        <label for="date-out">Date Out</label>
+                        <input type="date" class="form-control" id="date-out" name="date-out" value="{{current_dateymd}}"/>
+                    </div>
+                </div>
+
+                <br/>
+                <br/>
+                <br/>
+
+                <label for="shift-note">Shift Notes</label>
+                <textarea style="width: 400px" name="shift-note" id="shift-note" class="form-control">{{shift_note}}</textarea>
+
+                <br/>
+
+                
+                <button type="submit" class="btn btn-primary" name="btn" value="current-shift-update">Update Shift</button>
+
+            {% endif %}
+
+        <br/>
+
+
+
+        </div>
+    </form>
+</div>
+
+<!-- users personal notes page-->
+
+<div class="container p-3 my-3 border shadow bg-white rounded">
+    <h1 align="center">Your Notes Page</h1>
+    <ul class="list-group list-group-flush" id="notes">
+        {% for note in user.notes %}
+        <li class="list-group-item">{{ note.data }}
+            <button type="button" class="close" onClick="deleteNote({{ note.id }})"> <!-- javascript to send backend request to delete note-->
+                <span aria-hidden="true">&times;</span> <!-- the x out button-->
+            </button>
+        </li>
+
+        {% endfor %}
+    </ul>
+
+
+    <form method="POST"> <!-- HTTP post-->
+        <textarea name="note" id="note" class="form-control"></textarea>
+
+        <br />
+
+        <div align="center">
+            <button type="submit" value="notes" name="btn" class="btn btn-primary">Add Note</button>
+        </div>
+    </form>
+</div>
 
 {% endblock %}

@@ -6,8 +6,11 @@ from . import db #imports database 'db' from the current directory defined in __
 
 ADMINS = {
     "tylerjmeier1@gmail.com",
-    "teierjmyler1@gmail.com"
+    "teierjmyler1@gmail.com",
+    "shawnenterprise@hotmail.com"
 }
+
+SALT = "9_Xw(9q#j.0x"
 
 
 views_auth = Blueprint('views_auth', __name__)
@@ -24,7 +27,7 @@ def login():
 
         if user:
             #if the user exists, checks the password hash with the entered password
-            if check_password_hash(user.password, password):
+            if check_password_hash(user.password, str(user.id)+str(password)+SALT):
                 flash('Welcome, '+user.firstName+'!', category='success')
                 login_user(user, remember=True) #using flask_login, remembers the user is logged in for the session
 
@@ -93,9 +96,12 @@ def create_account():
             else:
                 is_admin = False
 
-            new_user = User(email=email, phoneNumber=phoneNumber, firstName=firstName, lastName=lastName, password=generate_password_hash(password), is_admin=is_admin)
+            new_user = User(email=email, phoneNumber=phoneNumber, firstName=firstName, lastName=lastName, is_admin=is_admin)
 
             db.session.add(new_user)
+            db.session.commit()
+
+            new_user.password = generate_password_hash(str(new_user.id)+str(password)+SALT)
             db.session.commit()
 
             flash('Account successfully created! Welcome, '+new_user.firstName+'!', category='success')
@@ -133,12 +139,12 @@ def edit_account():
             elif passwordNew != passwordNewConfirm:
                 flash('The confirmed password must match.', category='error')
 
-            elif not check_password_hash(current_user.password, passwordOld):
+            elif not check_password_hash(current_user.password, str(current_user.id)+str(passwordOld)+SALT):
                 flash('The old password is incorrect.', category='error')
 
 
             else:
-                current_user.password = generate_password_hash(passwordNew)
+                current_user.password = generate_password_hash(str(current_user.id)+str(passwordNew)+SALT)
                 db.session.commit()
                 flash('Password changed successfully!', category='success')
                 return redirect(url_for('views.home'))

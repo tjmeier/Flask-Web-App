@@ -8,7 +8,7 @@ from pytz import timezone
 
 views = Blueprint('views', __name__)
 
-MY_TIMEZONE = 'US/Eastern'
+MY_TIMEZONE = 'US/Eastern' #currently this app only can run in one timezone
 
 @views.route('/', methods=['GET', 'POST'])
 @login_required
@@ -125,7 +125,7 @@ def home():
             #recalculate shift times to be displayed on the page (could be consolidated)
             shift_timein24h = (current_shift.datetime_clockin).strftime("%H:%M")
             shift_timedelta = now - (current_shift.datetime_clockin)
-            shift_totaltime = (str(shift_timedelta))[0:(str(shift_timedelta)).rfind(".")] #truncate the fractions of seconds from shift_timedelta
+            shift_totaltime = (str(shift_timedelta)) #truncate the fractions of seconds from shift_timedelta
             shift_client = Client.query.get(current_shift.client_id)
 
             shift_dateymd = (current_shift.datetime_clockin).strftime("%Y-%m-%d")

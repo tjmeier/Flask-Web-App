@@ -79,27 +79,34 @@ def home():
             shift_note = request.form.get('shift-note')
 
             
-            #filling in dinal shift data
-            ending_shift = Shift.query.get(current_user.activeShift_id)
-            current_user.activeShift_id = 0
+            #filling in final shift data
 
             final_datetime_in = datetime.strptime(time_in + " " + date_in, "%H:%M %Y-%m-%d")
             final_datetime_out = datetime.strptime(time_out + " " + date_out, "%H:%M %Y-%m-%d")
             shift_totalhours = round((final_datetime_out - final_datetime_in).total_seconds()/3600, 5)
 
+            #some data still gets saved regardless of if the clockout was valid
+            current_shift.datetime_clockin = final_datetime_in
+            current_shift.client_id = shift_client_id
+            current_shift.note = shift_note
 
-            ending_shift.client_id = shift_client_id
-            ending_shift.datetime_clockin = final_datetime_in
-            ending_shift.datetime_clockout = final_datetime_out
-            ending_shift.total_hours = shift_totalhours
 
-            ending_shift.is_active = False
-            ending_shift.note = shift_note
 
-            flash('You successfully clocked out! Your shift lasted '+str(shift_totalhours)+' hours!', category='success')
+            if ((final_datetime_out - final_datetime_in).total_seconds() < 0):
+                flash('Your shift cannot be negative duration! Check your time in and time out.', category='error')
+                db.session.commit()
+                return redirect(url_for('views.home'))
+                
+            else:
+                current_user.activeShift_id = 0
+                
+                current_shift.datetime_clockout = final_datetime_out
+                current_shift.total_hours = shift_totalhours
+                current_shift.is_active = False
 
+                flash('You successfully clocked out! Your shift lasted '+str(shift_totalhours)+' hours!', category='success')
             
-            db.session.commit()
+                db.session.commit()
 
 
         elif request.form['btn'] == "current-shift-update":

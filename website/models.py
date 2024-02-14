@@ -6,7 +6,7 @@ from flask_login import UserMixin #allows us to make a user object based on the 
 from datetime import datetime
 from pytz import timezone
 
-MY_TIMEZONE = 'US/Eastern'
+MY_TIMEZONE = 'US/Eastern' #currently this app only can run in one timezone
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)

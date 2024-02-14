@@ -4,8 +4,11 @@ from .models import Note, Client, Shift
 from . import db #imports database 'db' from the current directory defined in __init__.py
 import json
 from datetime import datetime, date
+from pytz import timezone
 
 views = Blueprint('views', __name__)
+
+MY_TIMEZONE = 'US/Eastern'
 
 @views.route('/', methods=['GET', 'POST'])
 @login_required
@@ -15,7 +18,8 @@ def home():
     all_clients = Client.query.order_by(Client.lastName)
 
     #generating page variables
-    now = datetime.now()
+    now = datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+    print("heres now: ", now)
     current_weekday = now.strftime("%A")
     current_date = now.strftime("%m/%d/%Y")
     current_time12h = now.strftime("%I:%M %p")
@@ -50,7 +54,8 @@ def home():
             shift_client_id = request.form.get('client-id')
 
             #create a new shift
-            new_shift = Shift(user_id = current_user.id, client_id = shift_client_id, datetime_clockin=datetime.now())
+            new_shift = Shift(user_id = current_user.id, client_id = shift_client_id, \
+                              datetime_clockin=datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"))
             db.session.add(new_shift)
             db.session.commit()
 

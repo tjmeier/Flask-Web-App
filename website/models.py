@@ -4,11 +4,15 @@ from flask_login import UserMixin #allows us to make a user object based on the 
 #from sqlalchemy.sql import func
 
 from datetime import datetime
+from pytz import timezone
+
+MY_TIMEZONE = 'US/Eastern'
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     data = db.Column(db.String(10000))
-    date = db.Column(db.DateTime(timezone=True), default=datetime.now())
+    date = db.Column(db.DateTime(timezone=False), \
+                     default=datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"))
     #ensures a valid user id must be passed upon creation of this note object, 
     #allows a one to many relationship (one user, with multiple notes)
 
@@ -23,7 +27,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150))
     firstName = db.Column(db.String(150))
     lastName = db.Column(db.String(150))
-    datetime_joined = db.Column(db.DateTime(timezone=True), default=datetime.now())
+    datetime_joined = db.Column(db.DateTime(timezone=False), \
+                                default=datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"))
     
     role = db.Column(db.String(150), default="General")
 
@@ -42,9 +47,9 @@ class User(db.Model, UserMixin):
 #still needs more work, split into ArchivedJobs and ActiveJobs, and active jobs can have multiple users associated with it
 class Shift(db.Model):
     id = db.Column(db.Integer, primary_key=True) #id
-    datetime_clockin = db.Column(db.DateTime(timezone=True))
+    datetime_clockin = db.Column(db.DateTime(timezone=False))
 
-    datetime_clockout = db.Column(db.DateTime(timezone=True))
+    datetime_clockout = db.Column(db.DateTime(timezone=False))
     is_active = db.Column(db.Boolean, default=True)
     is_approved = db.Column(db.Boolean, default=False)
 
@@ -71,4 +76,5 @@ class Client(db.Model):
     zipcode = db.Column(db.String(10))
 
     shiftsReceived = db.relationship('Shift')
-    datetime_added = db.Column(db.DateTime(timezone=True), default=datetime.now())
+    datetime_added = db.Column(db.DateTime(timezone=False), \
+                                default=datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"))

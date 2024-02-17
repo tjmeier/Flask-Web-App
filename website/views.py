@@ -88,7 +88,7 @@ def home():
 
             final_datetime_in = datetime.strptime(time_in + " " + date_in, "%H:%M %Y-%m-%d")
             final_datetime_out = datetime.strptime(time_out + " " + date_out, "%H:%M %Y-%m-%d")
-            shift_totalhours = round((final_datetime_out - final_datetime_in).total_seconds()/3600, 3)
+            shift_totalhours = round((final_datetime_out - final_datetime_in).total_seconds()/3600, 10)
 
             #some data still gets saved regardless of if the clockout was valid
             current_shift.datetime_clockin = final_datetime_in
@@ -109,7 +109,7 @@ def home():
                 current_shift.total_hours = shift_totalhours
                 current_shift.is_active = False
 
-                flash('You successfully clocked out! Your shift lasted '+str(shift_totalhours)+' hours!', category='success')
+                flash('You successfully clocked out! Your shift lasted '+str(round(shift_totalhours, 2))+' hours!', category='success')
             
                 db.session.commit()
 
@@ -191,6 +191,7 @@ def shifts():
 
     all_shifts_timein = [shift.datetime_clockin.strftime("%I:%M %p") for shift in all_shifts]
     all_shifts_timeout = [shift.datetime_clockout.strftime("%I:%M %p") for shift in all_shifts]
+    all_shifts_total_hours = [round(shift.total_hours, 2) for shift in all_shifts]
     all_shifts_date = []
     for shift in all_shifts:
         if (shift.datetime_clockin.strftime("%m/%d/%Y") == shift.datetime_clockout.strftime("%m/%d/%Y")):
@@ -199,7 +200,7 @@ def shifts():
             all_shifts_date.append(shift.datetime_clockin.strftime("%m/%d/%Y")+" to "+shift.datetime_clockout.strftime("%m/%d/%Y"))
 
 
-    all_shifts_display_data = zip(all_shifts, all_shift_clients, all_shifts_timein, all_shifts_timeout, all_shifts_date)
+    all_shifts_display_data = zip(all_shifts, all_shift_clients, all_shifts_timein, all_shifts_timeout,  all_shifts_total_hours, all_shifts_date)
 
     return render_template("shifts.html", user=current_user, all_shifts_display_data=all_shifts_display_data)
 

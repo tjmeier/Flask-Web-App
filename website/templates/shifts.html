@@ -24,7 +24,7 @@
       </thead>
 
       <tbody>
-          {%for (a_shift, client_name, time_in, time_out, date) in all_shifts_display_data %}
+          {%for (a_shift, client_name, time_in, time_out, total_hours, date) in all_shifts_display_data %}
             <tr >
               <td>{{a_shift.id}}</td>
               <td>{{client_name}}</td>
@@ -35,7 +35,7 @@
               <td>No</td>
               {%endif%}
 
-              <td>{{a_shift.total_hours}}</td>
+              <td>{{total_hours}}</td>
               <td>{{time_in}}</td>
               <td>{{time_out}}</td>
               <td>{{date}}</td>     

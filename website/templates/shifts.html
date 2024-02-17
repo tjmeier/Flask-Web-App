@@ -25,7 +25,33 @@
 
       <tbody>
           {%for (a_shift, client_name, time_in, time_out, total_hours, date) in all_shifts_display_data %}
-            <tr >
+            
+            {% if a_shift.is_approved %}
+            <tr class="table-success">
+
+            {% elif a_shift.is_active %}
+            <tr class="font-weight-bold">
+
+            {% else %}
+            <tr>
+
+            {%endif%}
+
+
+
+              {% if a_shift.is_active %}
+
+              <td>{{a_shift.id}}</td>
+              <td>{{client_name}}</td>
+              <td>-</td>
+              <td>-</td>
+              <td>{{time_in}}</td>
+              <td>{{time_out}}</td>
+              <td>{{date}}</td> 
+
+
+              {% else %}
+
               <td>{{a_shift.id}}</td>
               <td>{{client_name}}</td>
 
@@ -38,7 +64,11 @@
               <td>{{total_hours}}</td>
               <td>{{time_in}}</td>
               <td>{{time_out}}</td>
-              <td>{{date}}</td>     
+              <td>{{date}}</td> 
+
+              {% endif %}
+              
+
 
               <!--<td><a href="" class="btn btn-outline-success btn-sm active" role="button" aria-pressed="true">View User</a></td>
                 add a view shift button-->

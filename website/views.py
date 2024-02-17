@@ -32,7 +32,7 @@ def home():
         shift_timein24h = (current_shift.datetime_clockin).strftime("%H:%M")
         
         shift_timedelta = now - (current_shift.datetime_clockin)
-        shift_totaltime = (str(shift_timedelta))[0:(str(shift_timedelta)).rfind(".")] #truncate the fractions of seconds from shift_timedelta
+        shift_totaltime = str(shift_timedelta) #truncate the fractions of seconds from shift_timedelta
         shift_client = Client.query.get(current_shift.client_id)
 
         shift_dateymd = (current_shift.datetime_clockin).strftime("%Y-%m-%d")

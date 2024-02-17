@@ -1,0 +1,53 @@
+{% extends "base.html" %} <!-- extends base.html and allows any blocks to be overridden here-->
+{% block title %}Shifts{% endblock %}
+
+<!-- content that we want displayed on home page goes here-->
+{% block content %}
+
+<br/>
+
+<div class="container p-3 my-3 border shadow bg-white rounded">
+  <h1 align="center">All Shifts</h1>
+
+  <br/>
+  <table class="table table-striped table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Client</th>
+          <th scope="col">Approved</th>
+          <th scope="col">Total Hours</th>
+          <th scope="col">Time In</th>
+          <th scope="col">Time Out</th>
+          <th scope="col">Date</th>
+        </tr>
+      </thead>
+
+      <tbody>
+          {%for (a_shift, client_name, time_in, time_out, date) in all_shifts_display_data %}
+            <tr >
+              <td>{{a_shift.id}}</td>
+              <td>{{client_name}}</td>
+
+              {% if a_shift.is_approved %}
+              <td>Yes</td>
+              {% else %}
+              <td>No</td>
+              {%endif%}
+
+              <td>{{a_shift.total_hours}}</td>
+              <td>{{time_in}}</td>
+              <td>{{time_out}}</td>
+              <td>{{date}}</td>     
+
+              <!--<td><a href="" class="btn btn-outline-success btn-sm active" role="button" aria-pressed="true">View User</a></td>
+                add a view shift button-->
+            </tr>
+
+
+          {% endfor %}
+      </tbody>
+  </table>
+</div>
+
+{% endblock %}

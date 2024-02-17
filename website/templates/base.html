@@ -39,7 +39,8 @@
                     <a class="nav-item nav-link" id="login" href="/login">Login</a>
                     <a class="nav-item nav-link" id="create-account" href="/create-account">Create Account</a>
                   {% else %}
-                    <a class="nav-item nav-link" id="home" href="/">Home</a>
+                  <a class="nav-item nav-link" id="home" href="/">Home</a>
+                  <a class="nav-item nav-link" id="see-shifts" href="/shifts">Shifts</a>
                     <a class="nav-item nav-link" id="edit-account" href="/edit-account">Account</a>
                     {%if user.is_admin%}
                     <a class="nav-item nav-link text-danger font-weight-bold" id="admin" href="/admin">Admin</a>

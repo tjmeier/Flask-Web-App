@@ -19,7 +19,6 @@ def home():
 
     #generating page variables
     now = datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
-    print("heres now: ", now)
     current_weekday = now.strftime("%A")
     current_date = now.strftime("%m/%d/%Y")
     current_time12h = now.strftime("%I:%M %p")
@@ -53,17 +52,23 @@ def home():
             
             shift_client_id = request.form.get('client-id')
 
-            #create a new shift
-            new_shift = Shift(user_id = current_user.id, client_id = shift_client_id, \
-                              datetime_clockin=datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"))
-            db.session.add(new_shift)
-            db.session.commit()
+            if shift_client_id:
 
-            flash('You successfully clocked in!', category='success')
+                #create a new shift
+                new_shift = Shift(user_id = current_user.id, client_id = shift_client_id,  \
+                                datetime_clockin=datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"))
+                db.session.add(new_shift)
+                db.session.commit()
 
-            #update user's active shift
-            current_user.activeShift_id = new_shift.id
-            db.session.commit()
+                flash('You successfully clocked in!', category='success')
+
+                #update user's active shift
+                current_user.activeShift_id = new_shift.id
+                db.session.commit()
+            
+            else:
+                flash('Could not clock in! There was no client selected.', category='error')
+
 
             #reload home page
             return redirect(url_for('views.home'))
@@ -83,7 +88,7 @@ def home():
 
             final_datetime_in = datetime.strptime(time_in + " " + date_in, "%H:%M %Y-%m-%d")
             final_datetime_out = datetime.strptime(time_out + " " + date_out, "%H:%M %Y-%m-%d")
-            shift_totalhours = round((final_datetime_out - final_datetime_in).total_seconds()/3600, 5)
+            shift_totalhours = round((final_datetime_out - final_datetime_in).total_seconds()/3600, 3)
 
             #some data still gets saved regardless of if the clockout was valid
             current_shift.datetime_clockin = final_datetime_in
@@ -172,6 +177,32 @@ def home():
         shift_totaltime = shift_totaltime,
         shift_client = shift_client,
         shift_note = shift_note)
+
+
+
+@views.route('/shifts')
+@login_required
+def shifts():
+    
+    all_shifts = Shift.query.order_by(Shift.datetime_clockout.desc())
+    all_shift_clients = [(Client.query.filter_by(id=shift.client_id).first()).firstName+" "+\
+                         (Client.query.filter_by(id=shift.client_id).first()).lastName for shift in all_shifts]
+    
+
+    all_shifts_timein = [shift.datetime_clockin.strftime("%I:%M %p") for shift in all_shifts]
+    all_shifts_timeout = [shift.datetime_clockout.strftime("%I:%M %p") for shift in all_shifts]
+    all_shifts_date = []
+    for shift in all_shifts:
+        if (shift.datetime_clockin.strftime("%m/%d/%Y") == shift.datetime_clockout.strftime("%m/%d/%Y")):
+            all_shifts_date.append(shift.datetime_clockin.strftime("%m/%d/%Y"))
+        else:
+            all_shifts_date.append(shift.datetime_clockin.strftime("%m/%d/%Y")+" to "+shift.datetime_clockout.strftime("%m/%d/%Y"))
+
+
+    all_shifts_display_data = zip(all_shifts, all_shift_clients, all_shifts_timein, all_shifts_timeout, all_shifts_date)
+
+    return render_template("shifts.html", user=current_user, all_shifts_display_data=all_shifts_display_data)
+
 
 @views.route('/delete-note', methods=['POST'])
 def delete_note():

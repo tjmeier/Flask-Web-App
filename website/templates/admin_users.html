@@ -5,7 +5,7 @@
 {% block content %}
 <br/>
 
-<div class="container p-3 my-3 border shadow bg-white rounded">
+<div class="table-responsive container p-3 my-3 border shadow bg-white rounded">
   <h1 align="center">Users Table</h1>
 
   <br/>
@@ -17,7 +17,7 @@
           <th scope="col">Email</th>
           <th scope="col">Phone Number</th>
           <th scope="col">Role</th>
-          <th scope="col">Active Job</th>
+          <th scope="col">Active Shift Id</th>
           <th scope="col"></th>
         </tr>
       </thead>
@@ -30,7 +30,11 @@
               <td>{{a_user.email}}</td>
               <td>{{a_user.phoneNumber}}</td>
               <td>{{a_user.role}}</td>
-              <td>{{a_user.activeJob}}</td>
+              {% if a_user.activeShift_id == 0%}
+                <td>-</td>
+              {% else %}
+                <td>#{{a_user.activeShift_id}}</td>
+              {%endif%}
               <td><a href="/admin/user/{{a_user.id}}" class="btn btn-outline-success btn-sm active" role="button" aria-pressed="true">View User</a></td>
             </tr>
 

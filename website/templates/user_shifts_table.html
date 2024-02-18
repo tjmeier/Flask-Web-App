@@ -1,0 +1,81 @@
+<table class="table table-striped">
+    <thead class="thead-dark table-bordered">
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Client</th>
+        <th scope="col">Approved</th>
+        <th scope="col">Total Hours</th>
+        <th scope="col">Time In</th>
+        <th scope="col">Time Out</th>
+        <th scope="col">Date</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+        {%for (a_shift, client_name, time_in, time_out, total_hours, date) in all_shifts_display_data %}
+          
+          {% if a_shift.is_approved %}
+          <tr class="table-success">
+
+          {% elif a_shift.is_active %}
+          <tr class="font-weight-bold">
+
+          {% else %}
+          <tr>
+
+          {%endif%}
+
+
+
+            {% if a_shift.is_active %}
+
+            <td>{{a_shift.id}}</td>
+            <td>{{client_name}}</td>
+            <td>-</td>
+            <td>-</td>
+            <td>{{time_in}}</td>
+            <td>{{time_out}}</td>
+            <td>{{date}}</td> 
+
+
+            {% else %}
+
+            <td>{{a_shift.id}}</td>
+            <td>{{client_name}}</td>
+
+            {% if a_shift.is_approved %}
+            <td>Yes</td>
+            {% else %}
+            <td>No</td>
+            {%endif%}
+
+            <td>{{total_hours}}</td>
+            <td>{{time_in}}</td>
+            <td>{{time_out}}</td>
+            <td>{{date}}</td> 
+
+            {% endif %}
+
+            <td>
+              <a class="btn btn-secondary" data-toggle="collapse" href="#{{a_shift.id}}" role="button" aria-expanded="false" aria-controls="{{a_shift.id}}">
+                Note
+              </a>
+            </td>
+
+            <tr>
+              <td colspan=8>
+                  <div class="collapse multi-collapse" id="{{a_shift.id}}">                  
+                    <div class="card card-body">
+                      <strong>Shift note: </strong>
+                      <span  style="white-space: pre-wrap">{{a_shift.note}}</span>
+                    </div>
+                </div>                      
+              </td>
+            </tr>
+
+
+        {% endfor %}
+    </tbody>
+  </table>
+</div>

@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User, Client
+from .dataprocessing import user_shifts_formatted
 from . import db #imports database 'db' from the current directory defined in __init__.py
 
 
@@ -110,5 +111,5 @@ def user(see_user_id):
     if (not current_user.is_admin):
         return redirect(url_for('views.home'))
     else:
-        see_user = User.query.filter_by(id=see_user_id).first()
-        return render_template("admin_see_user.html", user=current_user, see_user=see_user)
+        see_user = User.query.get(see_user_id)
+        return render_template("admin_see_user.html", user=current_user, see_user=see_user, all_shifts_display_data=user_shifts_formatted(see_user))

@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from .models import Note, Client, Shift
+from .dataprocessing import user_shifts_formatted
 from . import db #imports database 'db' from the current directory defined in __init__.py
 import json
 from datetime import datetime, date
@@ -27,7 +28,7 @@ def home():
 
 
     current_shift = Shift.query.get(current_user.activeShift_id)
-    if current_shift:
+    if current_shift is not None:
         shift_timein24h = (current_shift.datetime_clockin).strftime("%H:%M")
         
         shift_timedelta = now - (current_shift.datetime_clockin)
@@ -52,7 +53,7 @@ def home():
             
             shift_client_id = request.form.get('client-id')
 
-            if shift_client_id:
+            if shift_client_id is not None:
 
                 #create a new shift
                 new_shift = Shift(user_id = current_user.id, client_id = shift_client_id,  \
@@ -101,6 +102,9 @@ def home():
                 flash('Your shift cannot be negative duration! Check your time in and time out.', category='error')
                 db.session.commit()
                 return redirect(url_for('views.home'))
+            
+            elif (shift_note == ""):
+                flash('Please enter a shift note before clocking out!', category='error')
                 
             else:
                 current_user.activeShift_id = 0
@@ -116,6 +120,7 @@ def home():
 
         elif request.form['btn'] == "current-shift-update":
             
+
             #the only info you can update is the shift_note, time in (not time out), and the client
             time_in = request.form.get('time-in')
             date_in = request.form.get('date-in')
@@ -185,35 +190,7 @@ def home():
 @login_required
 def shifts():
 
-    #query list of all inactive shifts for given user
-    all_shifts = [Shift.query.get(shift.id) for shift in current_user.shiftsWorked]
-
-    #sort by clock out time (most recent to least resent will display on page)
-    #active shift is at the top, then the approved shifts, then the not approved shifts
-    all_shifts.sort(reverse=True, key=lambda shift: ( shift.is_active, not shift.is_approved, str(shift.datetime_clockout) if shift.datetime_clockout is not None else " ") ) 
-
-    #query list of all corresponding client first and last names
-    all_shift_clients = [Client.query.get(shift.client_id).firstName+" "+\
-                         Client.query.get(shift.client_id).lastName for shift in all_shifts]
-    
-    #query and format timein, timeout, total hours, and date
-    all_shifts_timein = [shift.datetime_clockin.strftime("%I:%M %p") for shift in all_shifts]
-    all_shifts_timeout = [shift.datetime_clockout.strftime("%I:%M %p") if not shift.is_active else "Still Active" for shift in all_shifts ] #active shift doesn't have a time out
-    
-    all_shifts_total_hours = [round(shift.total_hours, 2) for shift in all_shifts]
-    all_shifts_date = []
-    for shift in all_shifts:
-        if (shift.is_active):
-            all_shifts_date.append(shift.datetime_clockin.strftime("%m/%d/%Y"))
-        elif (shift.datetime_clockin.strftime("%m/%d/%Y") == shift.datetime_clockout.strftime("%m/%d/%Y")):
-            all_shifts_date.append(shift.datetime_clockin.strftime("%m/%d/%Y"))
-        else:
-            all_shifts_date.append(shift.datetime_clockin.strftime("%m/%d/%Y")+" to "+shift.datetime_clockout.strftime("%m/%d/%Y"))
-
-    #zip all these lists together and send it to the html page
-    all_shifts_display_data = zip(all_shifts, all_shift_clients, all_shifts_timein, all_shifts_timeout,  all_shifts_total_hours, all_shifts_date)
-
-    return render_template("shifts.html", user=current_user, all_shifts_display_data=all_shifts_display_data)
+    return render_template("shifts.html", user=current_user, all_shifts_display_data=user_shifts_formatted(current_user))
 
 
 @views.route('/delete-note', methods=['POST'])

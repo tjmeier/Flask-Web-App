@@ -1,9 +1,12 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from flask_login import login_user, login_required, logout_user, current_user
+from flask_login import login_required, current_user
 from .models import User, Client
-from .dataprocessing import user_shifts_formatted
+from .dataprocessing import user_all_shifts_formatted, users_shifts_pd_dataframe
 from . import db #imports database 'db' from the current directory defined in __init__.py
 
+import os
+
+from datetime import datetime
 
 
 
@@ -112,4 +115,7 @@ def user(see_user_id):
         return redirect(url_for('views.home'))
     else:
         see_user = User.query.get(see_user_id)
-        return render_template("admin_see_user.html", user=current_user, see_user=see_user, all_shifts_display_data=user_shifts_formatted(see_user))
+
+        # for testing generating excel: users_shifts_pd_dataframe([see_user], datetime.strptime("2024-02-16 0:00:00", "%Y-%m-%d %H:%M:%S"), datetime.strptime("2024-02-19 0:00:00", "%Y-%m-%d %H:%M:%S"))
+
+        return render_template("admin_see_user.html", user=current_user, see_user=see_user, all_shifts_display_data=user_all_shifts_formatted(user=see_user, use_case="admin html"))

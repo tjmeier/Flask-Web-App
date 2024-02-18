@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from .models import Note, Client, Shift
-from .dataprocessing import user_shifts_formatted
+from .dataprocessing import user_all_shifts_formatted
 from . import db #imports database 'db' from the current directory defined in __init__.py
 import json
 from datetime import datetime, date
@@ -190,7 +190,7 @@ def home():
 @login_required
 def shifts():
 
-    return render_template("shifts.html", user=current_user, all_shifts_display_data=user_shifts_formatted(current_user))
+    return render_template("shifts.html", user=current_user, all_shifts_display_data=user_all_shifts_formatted(user=current_user, use_case="user html"))
 
 
 @views.route('/delete-note', methods=['POST'])

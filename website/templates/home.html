@@ -7,14 +7,17 @@
 
 <div class="container p-3 my-3 border shadow bg-white rounded">
     <form method="POST"> <!-- HTTP post-->
-        <div class="form-group" align="center">
-
+        <div class="row form-group" align="center">
+            
+            
             {% if user.activeShift_id == 0 %} <!-- user is currently clocked out-->
+            <div class="col">
+                
                 <h1>New Shift</h1>
 
                 <br/>
 
-                <button type="submit" style="width: 400px; height: 100px" class="btn btn-success btn-lg" name="btn" value="clockin">
+                <button type="submit" style="min-width: 200px; min-height: 100px" class="btn btn-success btn-lg" name="btn" value="clockin">
                     <h4 class="font-weight-bold">Clock In</h4>
                 </button>
 
@@ -27,23 +30,27 @@
                 <br/>
 
 
-                <label for="client-id">Choose a client</label>
-                <select id="client-id" name="client-id" class="form-select form-select-lg">
+                <label for="client-id" style="font-size: large">Choose a client </label>
+                <select id="client-id" name="client-id" class="form-select form-select-lg" style="font-size: large">
                     {% for client in all_clients %}
                         <option value="{{client.id}}">{{client.firstName}} {{client.lastName}}</option>
                     {% endfor %}
                 </select>
-                
 
+            </div>
 
             {% else %} <!-- user is currently clocked in-->
+            <div class="col">
+                <br/>
+
+
                 <h1>Current Shift</h1>
 
                 <h1 class="text-success">{{shift_totaltime}}</h1>
                 
                 <br/>
 
-                <button type="submit" style="width: 400px; height: 100px" class="btn btn-danger btn-lg" name="btn" value="clockout">
+                <button type="submit" style="min-width: 200px; min-height: 100px" class="btn btn-danger btn-lg" name="btn" value="clockout">
                     <h4 class="font-weight-bold">Clock Out</h4>
                 </button>
 
@@ -57,17 +64,21 @@
                 <br/>
                 <br/>
 
+            </div>
+            <div class="col">
+                <br/>
+
                 <h3>Update Shift Details</h3>
-                <p  style="width: 400px" class="text-secondary">
+                <p  style="max-width: 400px" class="text-secondary">
                     Press 'Update Shift' to save new information for your current shift. 
                     Press 'Clock Out' to end your shift and submit the following information.
                 </p>
- 
+    
 
                 <br/>
 
-                <label for="client-id">Change client</label>
-                <select id="client-id" name="client-id" class="form-select form-select-lg">
+                <label for="client-id" style="font-size: large">Change client</label>
+                <select id="client-id" name="client-id" class="form-select form-select-lg" style="font-size: large">
                     <option value="{{shift_client.id}}">Currently - {{shift_client.firstName}} {{shift_client.lastName}}</option>
                     {% for client in all_clients %}
                         <option value="{{client.id}}">{{client.firstName}} {{client.lastName}}</option>
@@ -107,20 +118,24 @@
                 <br/>
 
                 <label for="shift-note">Shift Notes</label>
-                <textarea style="width: 400px" name="shift-note" id="shift-note" class="form-control">{{shift_note}}</textarea>
+                <textarea style="max-width: 400px" name="shift-note" id="shift-note" class="form-control">{{shift_note}}</textarea>
 
                 <br/>
 
                 
                 <button type="submit" class="btn btn-primary" name="btn" value="current-shift-update">Update Shift</button>
+                
+            </div>
+            
 
             {% endif %}
-
-        <br/>
-
-
+                    
+                    
+            <br/>
 
         </div>
+
+
     </form>
 </div>
 

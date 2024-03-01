@@ -90,6 +90,6 @@ def users_shifts_pd_dataframe(users, starting_datetime, ending_datetime):
     df["Shift ID"] = df["Shift ID"].astype('int')
     df["Total Hours"] = df["Total Hours"].astype('float')
 
-    df.to_excel(f'Excel\{users[0].firstName}-test.xlsx', index=False, float_format="%.2f")
+    df.to_excel(f'Excel/{users[0].firstName}-test.xlsx', index=False, float_format="%.2f")
     
 

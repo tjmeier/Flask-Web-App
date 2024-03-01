@@ -8,6 +8,7 @@ import numpy as np
 import os
 
 DATE_MDY_FORMAT = "%m/%d/%Y"
+DATE_MDY_DASHES_FORMAT = "%m-%d-%Y"
 TIME_12H_FORMAT = "%I:%M %p"
 
 #date_range_as tuple (start date, end date);
@@ -59,7 +60,7 @@ def user_all_shifts_formatted(user, use_case = "user html", datetime_range = "al
     elif use_case == "admin pandas":
 
         all_shifts_datein = [shift.datetime_clockin.strftime(DATE_MDY_FORMAT) for shift in all_shifts]
-        all_shifts_dateout = [shift.datetime_clockin.strftime(DATE_MDY_FORMAT) if not shift.is_active else "Not Completed" for shift in all_shifts ] #active shift doesn't have a time out
+        all_shifts_dateout = [shift.datetime_clockout.strftime(DATE_MDY_FORMAT) if not shift.is_active else "Not Completed" for shift in all_shifts ] #active shift doesn't have a time out
 
         return np.array([all_shifts_id, all_shift_clients, all_shifts_total_hours, all_shifts_timein, all_shifts_datein, all_shifts_timeout, all_shifts_dateout]).T
     
@@ -69,12 +70,15 @@ def user_all_shifts_formatted(user, use_case = "user html", datetime_range = "al
 
 
 
-
+#returns path to excel file to be downloaded
 def users_shifts_pd_dataframe(users, starting_datetime, ending_datetime):
 
+    EXCEL_DIRECTORY_NAME = "Excel"
+    EXCEL_FILE_NAME = f'{users[0].firstName}-{starting_datetime.strftime(DATE_MDY_DASHES_FORMAT)}.xlsx'
+
     #creates excel folder
-    if (not os.path.exists("Excel")):
-        os.makedirs("Excel")
+    if (not os.path.exists(EXCEL_DIRECTORY_NAME)):
+        os.makedirs(EXCEL_DIRECTORY_NAME)
 
     
     #create a 3D list of all shift data for each user in the list
@@ -82,14 +86,24 @@ def users_shifts_pd_dataframe(users, starting_datetime, ending_datetime):
 
     users_shifts_data = [user_all_shifts_formatted(user=user, use_case="admin pandas", datetime_range=(starting_datetime, ending_datetime)) for user in users]
 
-    SHIFTS_DATA_COL_NAMES = ("Shift ID", "Client", "Total Hours", "Time In", "Date In", "Time Out", "Date Out")
+    SHIFTS_DATA_COL_NAMES = ("Shift ID", "Client", "Shift Hours", "Time In", "Date In", "Time Out", "Date Out")
 
-    print(users_shifts_data[0])
 
-    df = pd.DataFrame(users_shifts_data[0], columns=SHIFTS_DATA_COL_NAMES)
-    df["Shift ID"] = df["Shift ID"].astype('int')
-    df["Total Hours"] = df["Total Hours"].astype('float')
+    dfs = []
 
-    df.to_excel(f'Excel/{users[0].firstName}-test.xlsx', index=False, float_format="%.2f")
+    for i, user in enumerate(users):
+        #I want to add a title with the users name at the top
+
+        df = pd.DataFrame(users_shifts_data[i], columns=SHIFTS_DATA_COL_NAMES)
+        df["Shift ID"] = df["Shift ID"].astype('int')
+        df["Shift Hours"] = df["Shift Hours"].astype('float')
+
+        df.loc[len(df.index)] = (df[["Shift Hours"]]).sum().rename("Total Hours") #add a total hours row to the end of the dataframe
+
+        dfs.append(df)
+
+    main_df = pd.concat([df for df in dfs]) #concatenate all these datafro
+
+    main_df.to_excel(EXCEL_DIRECTORY_NAME+"/"+EXCEL_FILE_NAME, index=False, float_format="%.2f")
     
-
+    return EXCEL_FILE_NAME

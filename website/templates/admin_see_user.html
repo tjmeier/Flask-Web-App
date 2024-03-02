@@ -7,61 +7,73 @@
 
 <div align="center">
 
-    <h3>{{see_user.firstName}} {{see_user.lastName}}</h3>
+    <div class="container p-3 my-3 border shadow bg-white rounded">
+
+        <h3>{{see_user.firstName}} {{see_user.lastName}}</h3>
+
+        <div class="row">
+
+            <div class="col-8">
+                <br/>
+            
+                <table class="table table-sm" style="max-width: 600px;">
+            
+                    <tbody>
+                        <!-- <tr>
+                        <td class="font-weight-light" scope="row">First</td>
+                        <td>{{see_user.firstName}}</td>
+                        </tr>
+                        <tr>
+                        <td class="font-weight-light"  scope="row">Last</td>
+                        <td>{{see_user.lastName}}</td>
+                        </tr> -->
+                        <tr> 
+                            <td class="font-weight-light"  scope="row">Email</td>
+                            <td>{{see_user.email}}</td>
+                            </tr>
+                        <tr>
+                            <td class="font-weight-light"  scope="row">Phone Number</td>
+                            <td>{{see_user.phoneNumber}}</td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-light"  scope="row">Role</td>
+                            <td>{{see_user.role}}</td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-light"  scope="row">Date Joined</td>
+                            <td class="text-secondary">{{see_user.datetime_joined}}</td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-light"  scope="row">User ID</td>
+                            <td class="text-secondary">{{see_user.id}}</td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-light"  scope="row">Admin Access</td>
+            
+                            {% if see_user.is_admin %}
+                                <td class="text-danger">Yes</td>
+                            {% else %}
+                                <td class="text-secondary">No</td>
+                            {% endif %}
+                        </tr>
+                    </tbody>
+                </table>
+
+                
+                
+            </div>
+
+            <div class="col-4" style="margin-top: 10%;">
+                <a class="btn btn-primary btnl-lg" href="{{Excel_File_Name}}" role="button" download>Download <strong>{{see_user.firstName}}</strong>'s Shifts</a>
+            </div>
+            
+        </div>
+    </div>
+
 
     <br/>
 
-
-    <table class="table table-sm" style="max-width: 600px;">
-
-        <tbody>
-            <!-- <tr>
-            <td class="font-weight-light" scope="row">First</td>
-            <td>{{see_user.firstName}}</td>
-            </tr>
-            <tr>
-            <td class="font-weight-light"  scope="row">Last</td>
-            <td>{{see_user.lastName}}</td>
-            </tr> -->
-            <tr> 
-                <td class="font-weight-light"  scope="row">Email</td>
-                <td>{{see_user.email}}</td>
-                </tr>
-            <tr>
-                <td class="font-weight-light"  scope="row">Phone Number</td>
-                <td>{{see_user.phoneNumber}}</td>
-            </tr>
-            <tr>
-                <td class="font-weight-light"  scope="row">Role</td>
-                <td>{{see_user.role}}</td>
-            </tr>
-            <tr>
-                <td class="font-weight-light"  scope="row">Date Joined</td>
-                <td class="text-secondary">{{see_user.datetime_joined}}</td>
-            </tr>
-            <tr>
-                <td class="font-weight-light"  scope="row">User ID</td>
-                <td class="text-secondary">{{see_user.id}}</td>
-            </tr>
-            <tr>
-                <td class="font-weight-light"  scope="row">Admin Access</td>
-
-                {% if see_user.is_admin %}
-                    <td class="text-danger">Yes</td>
-                {% else %}
-                    <td class="text-secondary">No</td>
-                {% endif %}
-            </tr>
-        </tbody>
-    </table>
-
-    <br/>
-
-    <a href={{"/admin/download/" + Excel_File_Name}} download>Download User Shifts</a>
-    <a href="/admin/download/Tyler-02-16-2023.xlsx" download>Download User Shiftsssxcxss</a>
-
-
-    <br/>
+   
 
 
     <div class="table-responsive container p-3 my-3 border shadow bg-white rounded">

@@ -114,12 +114,15 @@ def user(see_user_id):
     if (not current_user.is_admin):
         return redirect(url_for('views.home'))
     else:
+        DOWNLOAD_PATH = "/admin/download/"
+        
         see_user = User.query.get(see_user_id)
 
         # for testing generating excel: 
-        Excel_File_Name = users_shifts_pd_dataframe(User.query.order_by(User.lastName), datetime.strptime("2023-02-16 0:00:00", "%Y-%m-%d %H:%M:%S"), datetime.strptime("2025-03-19 0:00:00", "%Y-%m-%d %H:%M:%S"))
+        Excel_File_Name = users_shifts_pd_dataframe([see_user], datetime.strptime("2023-02-16 0:00:00", "%Y-%m-%d %H:%M:%S"), datetime.strptime("2025-03-19 0:00:00", "%Y-%m-%d %H:%M:%S"))
 
-        return render_template("admin_see_user.html", user=current_user, see_user=see_user, Excel_File_Name=f"/admin/download/{Excel_File_Name}", \
+
+        return render_template("admin_see_user.html", user=current_user, see_user=see_user, Excel_File_Name=f"{DOWNLOAD_PATH}{Excel_File_Name}", \
                                 all_shifts_display_data=user_all_shifts_formatted(user=see_user, use_case="admin html"))
     
 @views_admin.route('/download/<path:excel_filename>', methods=['GET', 'POST'])

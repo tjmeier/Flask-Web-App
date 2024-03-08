@@ -71,10 +71,10 @@ def user_all_shifts_formatted(user, use_case = "user html", datetime_range = "al
 
 
 #returns path to excel file to be downloaded
-def users_shifts_pd_dataframe(users, starting_datetime, ending_datetime):
+def users_shifts_pd_dataframe(users, download_name, starting_datetime, ending_datetime):
 
     EXCEL_DIRECTORY_NAME = "Excel"
-    EXCEL_FILE_NAME = f'{users[0].firstName}-{starting_datetime.strftime(DATE_MDY_DASHES_FORMAT)}.xlsx'
+    EXCEL_FILE_NAME = f'{download_name} Shifts {starting_datetime.strftime(DATE_MDY_DASHES_FORMAT)} to {ending_datetime.strftime(DATE_MDY_DASHES_FORMAT)}.xlsx'
 
     #creates excel folder
     if (not os.path.exists(EXCEL_DIRECTORY_NAME)):

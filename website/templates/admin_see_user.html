@@ -9,11 +9,11 @@
 
     <div class="container p-3 my-3 border shadow bg-white rounded">
 
-        <h3>{{see_user.firstName}} {{see_user.lastName}}</h3>
+        <h1>{{see_user.firstName}} {{see_user.lastName}}</h1>
 
         <div class="row">
 
-            <div class="col-8">
+            <div class="col" style="margin: 2%;">
                 <br/>
             
                 <table class="table table-sm" style="max-width: 600px;">
@@ -63,9 +63,55 @@
                 
             </div>
 
-            <div class="col-4" style="margin-top: 10%;">
-                <a class="btn btn-primary btnl-lg" href="{{Excel_File_Name}}" role="button" download>Download <strong>{{see_user.firstName}}</strong>'s Shifts</a>
+            <div class="col-auto"  style="margin: 2%;">
+                <a class="btn btn-primary btnl-lg" style="width: 100%" href="{{Excel_File_Name}}" role="button" download>Download <strong>{{see_user.firstName}}</strong>'s Shifts</a>
+
+
+                <form method="POST"> <!-- HTTP post-->
+                    <div class="form-group" align="center">
+                        <div align="center" class = "input-group justify-content-center" style="margin: 2%;">
+
+                            <div class="col-xs-6">
+                                <label for="starting-date">Starting Date</label>
+                                <input type="date" class="form-control" id="starting-date" name="starting-date" value="{{previous_starting_date}}"/> <!-- html time input type works with YYYY-MM-DD date-->
+                                <br/>
+                                
+                                
+                                <button type="submit" class="btn btn-secondary" name="btn" value="past-week-time-range"> << One Week </button>
+                                <br/>
+                                <br/>
+
+                                <button type="submit" class="btn btn-dark" name="btn" value="past-pay-period-time-range">Past Pay Period</button>
+                            </div>
+
+                            <div class="col-xs-6">
+                                <label for="ending-date">Ending Date</label>  
+                                <input type="date" class="form-control" id="ending-date" name="ending-date" value="{{previous_ending_date}}"/> <!-- html time input type works with YYYY-MM-DD date-->
+                            
+                                <br/>
+
+                                <button type="submit" class="btn btn-secondary" name="btn" value="next-week-time-range"> One Week >> </button>
+                                <br/>
+                                <br/>
+
+                                <button type="submit" class="btn btn-dark" name="btn" value="update-time-range">Update Time Range</button>
+                            </div>
+                        </div>
+
+                      
+
+                       
+                        
+                        
+
+
+
+                    </div>
+
+                </form>
             </div>
+
+
             
         </div>
     </div>

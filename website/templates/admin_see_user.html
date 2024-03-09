@@ -64,51 +64,10 @@
             </div>
 
             <div class="col-auto"  style="margin: 2%;">
-                <a class="btn btn-primary btnl-lg" style="width: 100%" href="{{Excel_File_Name}}" role="button" download>Download <strong>{{see_user.firstName}}</strong>'s Shifts</a>
+
+                {% include 'excel_download_selector.html' %}
 
 
-                <form method="POST"> <!-- HTTP post-->
-                    <div class="form-group" align="center">
-                        <div align="center" class = "input-group justify-content-center" style="margin: 2%;">
-
-                            <div class="col-xs-6">
-                                <label for="starting-date">Starting Date</label>
-                                <input type="date" class="form-control" id="starting-date" name="starting-date" value="{{previous_starting_date}}"/> <!-- html time input type works with YYYY-MM-DD date-->
-                                <br/>
-                                
-                                
-                                <button type="submit" class="btn btn-secondary" name="btn" value="past-week-time-range"> << One Week </button>
-                                <br/>
-                                <br/>
-
-                                <button type="submit" class="btn btn-dark" name="btn" value="past-pay-period-time-range">Past Pay Period</button>
-                            </div>
-
-                            <div class="col-xs-6">
-                                <label for="ending-date">Ending Date</label>  
-                                <input type="date" class="form-control" id="ending-date" name="ending-date" value="{{previous_ending_date}}"/> <!-- html time input type works with YYYY-MM-DD date-->
-                            
-                                <br/>
-
-                                <button type="submit" class="btn btn-secondary" name="btn" value="next-week-time-range"> One Week >> </button>
-                                <br/>
-                                <br/>
-
-                                <button type="submit" class="btn btn-dark" name="btn" value="update-time-range">Update Time Range</button>
-                            </div>
-                        </div>
-
-                      
-
-                       
-                        
-                        
-
-
-
-                    </div>
-
-                </form>
             </div>
 
 

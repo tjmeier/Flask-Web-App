@@ -11,6 +11,45 @@ from . import db #imports database 'db' from the current directory defined in __
 
 import os
 
+DOWNLOAD_PATH = "/admin/download/"
+
+
+def get_starting_ending_date_selection():
+    now = datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d"), "%Y-%m-%d")
+
+    #gets time range for past pay period
+    starting_date = now - timedelta(days= -now.weekday()+1, weeks=2) #2 mondays ago
+    ending_date = now - timedelta(days= -now.weekday()+1, weeks=1) #1 monday ago
+    
+    #update time range from user submission
+    if request.method == 'POST':
+
+        #takes whatever is currently in the form
+        if request.form['btn'] == 'update-time-range':
+            starting_date = datetime.strptime(request.form.get('starting-date'),"%Y-%m-%d")
+            ending_date = datetime.strptime(request.form.get('ending-date'),"%Y-%m-%d")
+
+        #takes whatever is currently in the form, and adds or subtracts 7 days to shift weeks
+        elif request.form['btn'] == 'past-week-time-range':
+            starting_date = datetime.strptime(request.form.get('starting-date'),"%Y-%m-%d") - timedelta(days=7) 
+            ending_date = datetime.strptime(request.form.get('ending-date'),"%Y-%m-%d") - timedelta(days=7) 
+        elif request.form['btn'] == 'next-week-time-range':
+            starting_date = datetime.strptime(request.form.get('starting-date'),"%Y-%m-%d") + timedelta(days=7) 
+            ending_date = datetime.strptime(request.form.get('ending-date'),"%Y-%m-%d") + timedelta(days=7) 
+
+        elif request.form['btn'] == 'past-pay-period-time-range':
+            starting_date = now - timedelta(days= -now.weekday()+1, weeks=2) #2 mondays ago
+            ending_date = now - timedelta(days= -now.weekday()+1, weeks=1) #1 monday ago
+    
+
+
+    #makes the time attributes of the starting and ending date be midnight
+    starting_date.replace(hour=0, minute=0, second=0)
+    ending_date.replace(hour=0, minute=0, second=0)
+
+
+    return starting_date, ending_date
+
 
 
 
@@ -22,14 +61,22 @@ def home():
     if (not current_user.is_admin):
         return redirect(url_for('views.home'))
     else:
-        data = request.form
+
+
+        all_users = User.query.order_by(User.lastName)
+
+        starting_date, ending_date = get_starting_ending_date_selection()
+
+
         
-        if request.method == 'POST':
-            pass
+        
+        # for testing generating excel: 
+        Excel_File_Name = users_shifts_pd_dataframe(all_users, "All Users", \
+                                                    starting_date, ending_date)
 
 
-
-        return render_template("admin.html", user=current_user)
+        return render_template("admin.html", user=current_user, previous_starting_date = starting_date.strftime("%Y-%m-%d"), previous_ending_date = ending_date.strftime("%Y-%m-%d"), \
+                                Excel_File_Name=f"{DOWNLOAD_PATH}{Excel_File_Name}", download_button_text = "All Users",)
 
 @views_admin.route('/clients', methods=['GET', 'POST'])
 @login_required
@@ -117,42 +164,9 @@ def user(see_user_id):
         return redirect(url_for('views.home'))
     else:
         
-        now = datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d"), "%Y-%m-%d")
-
-        #gets time range for past pay period
-        starting_date = now - timedelta(days= -now.weekday()+1, weeks=2) #2 mondays ago
-        ending_date = now - timedelta(days= -now.weekday()+1, weeks=1) #1 monday ago
         
-        #update time range from user submission
-        if request.method == 'POST':
+        starting_date, ending_date = get_starting_ending_date_selection()
 
-            #takes whatever is currently in the form
-            if request.form['btn'] == 'update-time-range':
-                starting_date = datetime.strptime(request.form.get('starting-date'),"%Y-%m-%d")
-                ending_date = datetime.strptime(request.form.get('ending-date'),"%Y-%m-%d")
-
-            #takes whatever is currently in the form, and adds or subtracts 7 days to shift weeks
-            elif request.form['btn'] == 'past-week-time-range':
-                starting_date = datetime.strptime(request.form.get('starting-date'),"%Y-%m-%d") - timedelta(days=7) 
-                ending_date = datetime.strptime(request.form.get('ending-date'),"%Y-%m-%d") - timedelta(days=7) 
-            elif request.form['btn'] == 'next-week-time-range':
-                starting_date = datetime.strptime(request.form.get('starting-date'),"%Y-%m-%d") + timedelta(days=7) 
-                ending_date = datetime.strptime(request.form.get('ending-date'),"%Y-%m-%d") + timedelta(days=7) 
-
-            elif request.form['btn'] == 'past-pay-period-time-range':
-                starting_date = now - timedelta(days= -now.weekday()+1, weeks=2) #2 mondays ago
-                ending_date = now - timedelta(days= -now.weekday()+1, weeks=1) #1 monday ago
-        
-
-
-        #makes the time attributes of the starting and ending date be midnight
-        starting_date.replace(hour=0, minute=0, second=0)
-        ending_date.replace(hour=0, minute=0, second=0)
-
-
-
-        
-        DOWNLOAD_PATH = "/admin/download/"
         
         see_user = User.query.get(see_user_id)
 
@@ -162,7 +176,7 @@ def user(see_user_id):
 
 
         return render_template("admin_see_user.html", previous_starting_date = starting_date.strftime("%Y-%m-%d"), previous_ending_date = ending_date.strftime("%Y-%m-%d"), \
-                                user=current_user, see_user=see_user, Excel_File_Name=f"{DOWNLOAD_PATH}{Excel_File_Name}", \
+                                user=current_user, see_user=see_user, Excel_File_Name=f"{DOWNLOAD_PATH}{Excel_File_Name}", download_button_text = f"{see_user.firstName} {see_user.lastName}", \
                                 all_shifts_display_data=user_all_shifts_formatted(user=see_user, use_case="admin html"))
     
 @views_admin.route('/download/<path:excel_filename>', methods=['GET', 'POST'])

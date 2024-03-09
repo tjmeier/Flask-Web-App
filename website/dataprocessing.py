@@ -92,8 +92,12 @@ def users_shifts_pd_dataframe(users, download_name, starting_datetime, ending_da
     dfs = []
 
     for i, user in enumerate(users):
-        #I want to add a title with the users name at the top
+        
+        user_info_df = pd.DataFrame( [f"{user.firstName} {user.lastName}", f"{user.email}"], columns=["User"])
 
+        dfs.append(user_info_df)
+
+        
         df = pd.DataFrame(users_shifts_data[i], columns=SHIFTS_DATA_COL_NAMES)
         df["Shift ID"] = df["Shift ID"].astype('int')
         df["Shift Hours"] = df["Shift Hours"].astype('float')
@@ -101,6 +105,8 @@ def users_shifts_pd_dataframe(users, download_name, starting_datetime, ending_da
         df.loc[len(df.index)] = (df[["Shift Hours"]]).sum().rename("Total Hours") #add a total hours row to the end of the dataframe
 
         dfs.append(df)
+
+
 
     main_df = pd.concat([df for df in dfs]) #concatenate all these datafro
 

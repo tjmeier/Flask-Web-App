@@ -31,7 +31,7 @@
 
 
                 <label for="client-id" style="font-size: large">Choose a client </label>
-                <select id="client-id" name="client-id" class="form-select form-select-lg" style="font-size: large">
+                <select id="client-id" name="client-id" class="form-select form-select-lg" style="font-size: large; max-width: 50%;">
                     {% for client in all_clients %}
                         <option value="{{client.id}}">{{client.firstName}} {{client.lastName}}</option>
                     {% endfor %}
@@ -78,7 +78,7 @@
                 <br/>
 
                 <label for="client-id" style="font-size: large">Change client</label>
-                <select id="client-id" name="client-id" class="form-select form-select-lg" style="font-size: large">
+                <select id="client-id" name="client-id" class="form-select form-select-lg" style="font-size: large; max-width: 50%;">
                     <option value="{{shift_client.id}}">Currently - {{shift_client.firstName}} {{shift_client.lastName}}</option>
                     {% for client in all_clients %}
                         <option value="{{client.id}}">{{client.firstName}} {{client.lastName}}</option>

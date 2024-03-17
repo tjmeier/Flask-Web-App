@@ -1,5 +1,5 @@
 {% extends "admin_base.html" %} <!-- extends base.html and allows any blocks to be overridden here-->
-{% block title %}User {{user.id}}{% endblock %}
+{% block title %}User {{see_user.id}}{% endblock %}
 
 <!-- NOT DONEcontent that we want displayed on home page goes here-->
 {% block content %}
@@ -72,6 +72,49 @@
 
 
             
+        </div>
+    </div>
+
+
+    <br/>
+
+    
+    <div align="center">
+
+        <div class="container p-3 my-3 border shadow bg-white rounded">
+    
+            <h1>Roles Assigned</h1>
+
+            <form method="POST"> <!-- HTTP post-->
+
+                <div class="form-check">
+
+                        {% for role in all_roles %}
+
+                            
+                            {% if user.id is not in [role.role_holders] %}
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="roles-assigned{{role.id}}" name="roles-assigned{{role.id}}" value="Checked">
+                                <label class="form-check-label" for="roles-assigned{{role.id}}">{{role.role_name}}</label>
+                            </div>
+
+                            {% else %}
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="roles-assigned{{role.id}}" name="roles-assigned{{role.id}}" value="Unchecked">
+                                <label class="form-check-label" for="roles-assigned{{role.id}}">{{role.role_name}}</label>
+                              </div>
+
+                            {%endif%}
+                            
+
+                        {% endfor %}
+                    
+                    <button type="submit" class="btn btn-dark" name="btn" value="update-roles-assigned">Update Roles Assigned</button>
+
+                </div>
+
+            </form>
         </div>
     </div>
 

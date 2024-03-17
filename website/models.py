@@ -5,8 +5,8 @@ from flask_login import UserMixin #allows us to make a user object based on the 
 
 from datetime import datetime
 from pytz import timezone
+from .constants import MY_TIMEZONE
 
-MY_TIMEZONE = 'US/Eastern' #currently this app only can run in one timezone
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -44,6 +44,11 @@ class User(db.Model, UserMixin):
     # EVENTUALLY MAKE THE ID OF THE ACTIVE_JOBS CLASS
 
 
+    #TODO - one user can have multiple roles
+
+    #roles_ids = db.Column(db.Integer, db.ForeignKey('role.id'))
+    #roles = db.relationship('Role', foreign_keys=[roles_ids])
+
 #still needs more work, split into ArchivedJobs and ActiveJobs, and active jobs can have multiple users associated with it
 class Shift(db.Model):
     id = db.Column(db.Integer, primary_key=True) #id
@@ -76,5 +81,20 @@ class Client(db.Model):
     zipcode = db.Column(db.String(10))
 
     shiftsReceived = db.relationship('Shift')
+    datetime_added = db.Column(db.DateTime(timezone=False), \
+                                default=datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"))
+
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True) #id
+    role_name = db.Column(db.String(100), unique=True)
+    description = db.Column(db.String(1000), default="")
+
+    payrate = db.Column(db.Float, default=0.0)
+
+    def payrate_str(self):
+        return f"${format(self.payrate, '.2f')} / hour"
+
+    role_holders = db.Column(db.Integer, db.ForeignKey('user.id'))
+
     datetime_added = db.Column(db.DateTime(timezone=False), \
                                 default=datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"))

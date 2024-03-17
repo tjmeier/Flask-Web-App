@@ -1,0 +1,44 @@
+{% extends "admin_base.html" %} <!-- extends base.html and allows any blocks to be overridden here-->
+{% block title %}Role {{see_role.id}}{% endblock %}
+
+<!-- NOT DONEcontent that we want displayed on home page goes here-->
+{% block content %}
+<br/>
+
+<div align="center">
+
+    <h3>{{see_role.role_name}}</h3>
+
+    <br/>
+
+
+    <table class="table table-sm" style="max-width: 600px;">
+
+        <tbody>
+            <tr> 
+                <td class="font-weight-light"  scope="row">Description</td>
+                <td>{{see_role.description}}</td>
+                </tr>
+            <tr>
+                <td class="font-weight-light"  scope="row">Payrate</td>
+                <td>{{see_role.payrate_str()}}</td>
+            </tr>
+            <tr>
+                <td class="font-weight-light"  scope="row">Date Created</td>
+                <td class="text-secondary">{{see_role.datetime_added}}</td>
+            </tr>
+            <tr>
+                <td class="font-weight-light"  scope="row">Role ID</td>
+                <td class="text-secondary">{{see_role.id}}</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+{% include 'admin_users_table.html' %}
+
+
+
+
+{% endblock %}

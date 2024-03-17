@@ -5,7 +5,7 @@ from pytz import timezone
 
 
 from .constants import MY_TIMEZONE
-from .models import User, Client
+from .models import User, Client, Role
 from .dataprocessing import user_all_shifts_formatted, users_shifts_pd_dataframe
 from . import db #imports database 'db' from the current directory defined in __init__.py
 
@@ -18,8 +18,8 @@ def get_starting_ending_date_selection():
     now = datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d"), "%Y-%m-%d")
 
     #gets time range for past pay period
-    starting_date = now - timedelta(days= -now.weekday()+1, weeks=2) #2 mondays ago
-    ending_date = now - timedelta(days= -now.weekday()+1, weeks=1) #1 monday ago
+    starting_date = now + timedelta(days= -(now.weekday()), weeks= -1) #2 mondays ago
+    ending_date = now + timedelta(days= -(now.weekday()), weeks= 0) #1 monday ago
     
     #update time range from user submission
     if request.method == 'POST':
@@ -38,8 +38,8 @@ def get_starting_ending_date_selection():
             ending_date = datetime.strptime(request.form.get('ending-date'),"%Y-%m-%d") + timedelta(days=7) 
 
         elif request.form['btn'] == 'past-pay-period-time-range':
-            starting_date = now - timedelta(days= -now.weekday()+1, weeks=2) #2 mondays ago
-            ending_date = now - timedelta(days= -now.weekday()+1, weeks=1) #1 monday ago
+            starting_date = now + timedelta(days= -(now.weekday()), weeks= -1) #2 mondays ago
+            ending_date = now + timedelta(days= -(now.weekday()), weeks= 0) #1 monday ago
     
 
 
@@ -78,6 +78,8 @@ def home():
         return render_template("admin.html", user=current_user, previous_starting_date = starting_date.strftime("%Y-%m-%d"), previous_ending_date = ending_date.strftime("%Y-%m-%d"), \
                                 Excel_File_Name=f"{DOWNLOAD_PATH}{Excel_File_Name}", download_button_text = "All Users",)
 
+
+######################### Clients ##############################
 @views_admin.route('/clients', methods=['GET', 'POST'])
 @login_required
 def clients():
@@ -135,6 +137,7 @@ def clients():
     
 
 
+
 @views_admin.route('/client/<int:see_client_id>')
 @login_required
 def client(see_client_id):
@@ -145,7 +148,67 @@ def client(see_client_id):
         see_client = Client.query.filter_by(id=see_client_id).first()
         return render_template("admin_see_client.html", user=current_user, see_client=see_client)
 
+
+
+################################ Roles #############################################
+@views_admin.route('/roles', methods=['GET', 'POST'])
+@login_required
+def roles():
+    if (not current_user.is_admin):
+        return redirect(url_for('views.home'))
+    else:
+
+        if request.method == 'POST':
+            roleName = request.form.get('role-name')
+            description = request.form.get('description')
+            payrate = float(request.form.get('payrate'))
+
+
+            
+            role = Role.query.filter_by(role_name=roleName).first() #sees if there's already a client with that email
+            
+
+  
+            if len(roleName) < 2:
+                flash('Role name must be at least 2 characters.', category='error')
+                
+            elif payrate < 0:
+                flash('Payrate must be positive value.', category='error')
+                
+            elif role:
+                flash('A role with that name already exists.', category='error')
+                
+            else:
+                
+
+                new_role = Role(role_name = roleName, description=description, payrate = payrate)
+
+                db.session.add(new_role)
+                db.session.commit()
+
+                flash('Role successfully added!', category='success')
+
+        all_roles = Role.query.order_by(Role.role_name)
+
+        return render_template("admin_roles.html", user=current_user, all_roles = all_roles)
+
+
+
+@views_admin.route('/role/<int:see_role_id>')
+@login_required
+def role(see_role_id):
     
+    if (not current_user.is_admin):
+        return redirect(url_for('views.home'))
+    else:
+        see_role = Role.query.filter_by(id=see_role_id).first()
+
+        if see_role.role_holders is not None: role_users = [User.query.get(user.id) for user in see_role.role_holders]
+        else: role_users = []
+        return render_template("admin_see_role.html", see_role=see_role, user=current_user, all_users=role_users, user_table_name = f"{see_role.role_name} Users")
+
+
+######################################## Users ################################################
 @views_admin.route('/users')
 @login_required
 def users():
@@ -154,7 +217,7 @@ def users():
     else:    
         all_users = User.query.order_by(User.lastName)
 
-        return render_template("admin_users.html", user=current_user, all_users=all_users)
+        return render_template("admin_users.html", user=current_user, all_users=all_users, user_table_name = "Table of All Users")
 
 @views_admin.route('/user/<int:see_user_id>', methods=['GET', 'POST'])
 @login_required
@@ -164,11 +227,27 @@ def user(see_user_id):
         return redirect(url_for('views.home'))
     else:
         
-        
+        all_roles = Role.query.order_by(Role.role_name)
+
+        if request.method == 'POST':
+
+            if request.form['btn'] == 'update-roles-assigned':
+
+                
+                checked_roles = [role.id for role in all_roles if request.form.get(f'roles-assigned{role.id}') == "Checked"] #sets the users roles to what checkboxes get checked
+                print(checked_roles)
+                #db.session.commit()
+
+
+
+
         starting_date, ending_date = get_starting_ending_date_selection()
 
         
         see_user = User.query.get(see_user_id)
+
+        
+
 
         # for testing generating excel: 
         Excel_File_Name = users_shifts_pd_dataframe([see_user], f"{see_user.firstName} {see_user.lastName}", \
@@ -177,7 +256,7 @@ def user(see_user_id):
 
         return render_template("admin_see_user.html", previous_starting_date = starting_date.strftime("%Y-%m-%d"), previous_ending_date = ending_date.strftime("%Y-%m-%d"), \
                                 user=current_user, see_user=see_user, Excel_File_Name=f"{DOWNLOAD_PATH}{Excel_File_Name}", download_button_text = f"{see_user.firstName} {see_user.lastName}", \
-                                all_shifts_display_data=user_all_shifts_formatted(user=see_user, use_case="admin html"))
+                                all_shifts_display_data=user_all_shifts_formatted(user=see_user, use_case="admin html"), all_roles = all_roles)
     
 @views_admin.route('/download/<path:excel_filename>', methods=['GET', 'POST'])
 @login_required

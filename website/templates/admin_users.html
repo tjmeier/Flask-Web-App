@@ -5,43 +5,7 @@
 {% block content %}
 <br/>
 
-<div class="table-responsive container p-3 my-3 border shadow bg-white rounded">
-  <h1 align="center">Users Table</h1>
+{% include 'admin_users_table.html' %}
 
-  <br/>
-  <table class="table table-striped table-hover">
-      <thead class="thead-dark">
-        <tr>
-          <th scope="col">First</th>
-          <th scope="col">Last</th>
-          <th scope="col">Email</th>
-          <th scope="col">Phone Number</th>
-          <th scope="col">Role</th>
-          <th scope="col">Active Shift Id</th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-
-      <tbody>
-          {%for a_user in all_users %}
-            <tr >
-              <td>{{a_user.firstName}}</td>
-              <td>{{a_user.lastName}}</td>
-              <td>{{a_user.email}}</td>
-              <td>{{a_user.phoneNumber}}</td>
-              <td>{{a_user.role}}</td>
-              {% if a_user.activeShift_id == 0%}
-                <td>-</td>
-              {% else %}
-                <td>#{{a_user.activeShift_id}}</td>
-              {%endif%}
-              <td><a href="/admin/user/{{a_user.id}}" class="btn btn-outline-success btn-sm active" role="button" aria-pressed="true">View User</a></td>
-            </tr>
-
-
-          {% endfor %}
-      </tbody>
-  </table>
-</div>
 
 {% endblock %}

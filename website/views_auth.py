@@ -13,7 +13,7 @@ ADMINS = {
 SALT = "9_Xw(9q#j.0x"
 
 
-views_auth = Blueprint('views_auth', __name__)
+views_auth = Blueprint('views_auth', __name__, template_folder='templates')
 
 @views_auth.route('/login', methods=['GET', 'POST']) #by default, it only accepts HTTP get requests
 def login():

@@ -53,7 +53,7 @@ def get_starting_ending_date_selection():
 
 
 
-views_admin = Blueprint('views_admin', __name__)
+views_admin = Blueprint('views_admin', __name__, template_folder='templates/admin')
 
 @views_admin.route('/', methods=['GET', 'POST'])
 @login_required

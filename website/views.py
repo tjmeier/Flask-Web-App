@@ -7,7 +7,7 @@ import json
 from datetime import datetime, date
 from pytz import timezone
 
-views = Blueprint('views', __name__)
+views = Blueprint('views', __name__, template_folder='templates')
 
 MY_TIMEZONE = 'US/Eastern' #currently this app only can run in one timezone
 

@@ -8,12 +8,15 @@
         <th scope="col">Time In</th>
         <th scope="col">Time Out</th>
         <th scope="col">Date</th>
+        <th scope="col">Role</th>
+        <th scope="col">Payrate</th>   
+        <th scope="col">Earnings</th>     
         <th scope="col"></th>
       </tr>
     </thead>
 
     <tbody>
-        {%for (a_shift, client_name, time_in, time_out, total_hours, date) in all_shifts_display_data %}
+        {%for (a_shift, client_name, time_in, time_out, total_hours, date, role_name, payrate, earnings) in all_shifts_display_data %}
           
           {% if a_shift.is_approved %}
           <tr class="table-success">
@@ -37,7 +40,9 @@
             <td>{{time_in}}</td>
             <td>{{time_out}}</td>
             <td>{{date}}</td> 
-
+            <td>{{role_name}}</td>
+            <td>{{payrate}}</td> 
+            <td>-</td> 
 
             {% else %}
 
@@ -54,6 +59,9 @@
             <td>{{time_in}}</td>
             <td>{{time_out}}</td>
             <td>{{date}}</td> 
+            <td>{{role_name}}</td>
+            <td>{{payrate}}</td> 
+            <td><em>{{earnings}}</em></td> 
 
             {% endif %}
 

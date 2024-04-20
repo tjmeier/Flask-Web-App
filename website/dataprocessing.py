@@ -1,4 +1,4 @@
-from .models import Note, Client, Shift
+from .models import Note, Client, Shift, Role
 from . import db #imports database 'db' from the current directory defined in __init__.py
 from datetime import datetime, date
 
@@ -49,20 +49,27 @@ def user_all_shifts_formatted(user, use_case = "user html", datetime_range = "al
             all_shifts_date.append(shift.datetime_clockin.strftime(DATE_MDY_FORMAT))
         else:
             all_shifts_date.append(shift.datetime_clockin.strftime(DATE_MDY_FORMAT)+" to "+shift.datetime_clockout.strftime(DATE_MDY_FORMAT))
-
-    #zip all these lists together and send it to the html page
     
 
-    #
+    all_shift_role_names = [Role.query.get(shift.role_id).role_name for shift in all_shifts]
+
+    all_shift_payrates_flt = [Role.query.get(shift.role_id).payrate for shift in all_shifts]
+    all_shift_total_price_flt = [float(hours * rate) for (hours,rate) in zip(all_shifts_total_hours, all_shift_payrates_flt)]
+
+    all_shift_payrates_str = [Role.query.get(shift.role_id).payrate_str() for shift in all_shifts]
+    all_shift_total_price_str = [f"${format(hours * rate, '.2f')}" for (hours,rate) in zip(all_shifts_total_hours, all_shift_payrates_flt)]
+
+
+    #zip all these lists together and send it to the html page
     if use_case == "admin html" or use_case == "user html":
-        return zip(all_shifts, all_shift_clients, all_shifts_timein, all_shifts_timeout,  all_shifts_total_hours, all_shifts_date)
+        return zip(all_shifts, all_shift_clients, all_shifts_timein, all_shifts_timeout,  all_shifts_total_hours, all_shifts_date, all_shift_role_names, all_shift_payrates_str, all_shift_total_price_str)
 
     elif use_case == "admin pandas":
 
         all_shifts_datein = [shift.datetime_clockin.strftime(DATE_MDY_FORMAT) for shift in all_shifts]
         all_shifts_dateout = [shift.datetime_clockout.strftime(DATE_MDY_FORMAT) if not shift.is_active else "Not Completed" for shift in all_shifts ] #active shift doesn't have a time out
 
-        return np.array([all_shifts_id, all_shift_clients, all_shifts_total_hours, all_shifts_timein, all_shifts_datein, all_shifts_timeout, all_shifts_dateout]).T
+        return np.array([all_shifts_id, all_shift_clients, all_shifts_total_hours, all_shifts_timein, all_shifts_datein, all_shifts_timeout, all_shifts_dateout, all_shift_role_names, all_shift_payrates_flt, all_shift_total_price_flt]).T
     
 
 
@@ -86,7 +93,7 @@ def users_shifts_pd_dataframe(users, download_name, starting_datetime, ending_da
 
     users_shifts_data = [user_all_shifts_formatted(user=user, use_case="admin pandas", datetime_range=(starting_datetime, ending_datetime)) for user in users]
 
-    SHIFTS_DATA_COL_NAMES = ("Shift ID", "Client", "Shift Hours", "Time In", "Date In", "Time Out", "Date Out")
+    SHIFTS_DATA_COL_NAMES = ("Shift ID", "Client", "Shift Hours", "Time In", "Date In", "Time Out", "Date Out", "Role", "Hourly Rate", "Earnings")
 
 
     dfs = []
@@ -101,6 +108,8 @@ def users_shifts_pd_dataframe(users, download_name, starting_datetime, ending_da
         df = pd.DataFrame(users_shifts_data[i], columns=SHIFTS_DATA_COL_NAMES)
         df["Shift ID"] = df["Shift ID"].astype('int')
         df["Shift Hours"] = df["Shift Hours"].astype('float')
+        df["Hourly Rate"] = df["Hourly Rate"].astype('float')
+        df["Earnings"] = df["Earnings"].astype('float')
 
         df.loc[len(df.index)] = (df[["Shift Hours"]]).sum().rename("Total Hours") #add a total hours row to the end of the dataframe
 

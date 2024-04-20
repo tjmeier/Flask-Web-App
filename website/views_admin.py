@@ -5,13 +5,14 @@ from pytz import timezone
 
 
 from .constants import MY_TIMEZONE
-from .models import User, Client, Role
+from .models import User, Client, Role, RoleHolders
 from .dataprocessing import user_all_shifts_formatted, users_shifts_pd_dataframe
 from . import db #imports database 'db' from the current directory defined in __init__.py
 
 import os
 
-DOWNLOAD_PATH = "/admin/download/"
+DOWNLOAD_URL = "/admin/download/"
+EXCEL_DOWNLOAD_PATH = "../Excel/" # ** in Python Anywhere, we need to go up two directories
 
 
 def get_starting_ending_date_selection():
@@ -69,14 +70,11 @@ def home():
 
 
         
-        
-        # for testing generating excel: 
-        Excel_File_Name = users_shifts_pd_dataframe(all_users, "All Users", \
-                                                    starting_date, ending_date)
+        Excel_File_Name = users_shifts_pd_dataframe(all_users, "All Users", starting_date, ending_date)
 
 
         return render_template("admin.html", user=current_user, previous_starting_date = starting_date.strftime("%Y-%m-%d"), previous_ending_date = ending_date.strftime("%Y-%m-%d"), \
-                                Excel_File_Name=f"{DOWNLOAD_PATH}{Excel_File_Name}", download_button_text = "All Users",)
+                                Excel_File_Name=f"{DOWNLOAD_URL}{Excel_File_Name}", download_button_text = "All Users",)
 
 
 ######################### Clients ##############################
@@ -165,7 +163,7 @@ def roles():
 
 
             
-            role = Role.query.filter_by(role_name=roleName).first() #sees if there's already a client with that email
+            role = Role.query.filter_by(role_name=roleName).first() #sees if there's role a client with that name
             
 
   
@@ -203,8 +201,11 @@ def role(see_role_id):
     else:
         see_role = Role.query.filter_by(id=see_role_id).first()
 
-        if see_role.role_holders is not None: role_users = [User.query.get(user.id) for user in see_role.role_holders]
+
+        #needs to be verified.
+        if see_role.role_holders is not None: role_users = [User.query.get(role_holder.holder_user_id) for role_holder in see_role.role_holders]
         else: role_users = []
+
         return render_template("admin_see_role.html", see_role=see_role, user=current_user, all_users=role_users, user_table_name = f"{see_role.role_name} Users")
 
 
@@ -219,6 +220,12 @@ def users():
 
         return render_template("admin_users.html", user=current_user, all_users=all_users, user_table_name = "Table of All Users")
 
+
+def get_user_role_ids(user):
+    if user.roles_held is not None: return [role_holder.held_role_id for role_holder in user.roles_held]
+    else: return []
+
+
 @views_admin.route('/user/<int:see_user_id>', methods=['GET', 'POST'])
 @login_required
 def user(see_user_id):
@@ -227,24 +234,44 @@ def user(see_user_id):
         return redirect(url_for('views.home'))
     else:
         
+        see_user = User.query.get(see_user_id)
+
+
         all_roles = Role.query.order_by(Role.role_name)
+
+        user_current_roles = get_user_role_ids(see_user)
 
         if request.method == 'POST':
 
             if request.form['btn'] == 'update-roles-assigned':
 
-                
+
                 checked_roles = [role.id for role in all_roles if request.form.get(f'roles-assigned{role.id}') == "Checked"] #sets the users roles to what checkboxes get checked
-                print(checked_roles)
-                #db.session.commit()
+
+                #updating the held roles by this user based on the check boxes form
+                added_roles = [role for role in checked_roles if role not in user_current_roles]
+                
+                for role in added_roles:
+                    new_role_holder = RoleHolders(holder_user_id = see_user.id, held_role_id = role)
+                    db.session.add(new_role_holder)
+
+                
+                revoked_roles = [role for role in user_current_roles if role not in checked_roles]
+                
+                for role in revoked_roles:
+                    deleted_role_holder = RoleHolders.query.filter_by(holder_user_id = see_user.id, held_role_id = role).first()
+                    db.session.delete(deleted_role_holder)
+
+                db.session.commit()
 
 
+                #update the current users role values for the sake of the html prechecking the boxes
+                user_current_roles = get_user_role_ids(see_user)
 
 
         starting_date, ending_date = get_starting_ending_date_selection()
 
         
-        see_user = User.query.get(see_user_id)
 
         
 
@@ -255,8 +282,8 @@ def user(see_user_id):
 
 
         return render_template("admin_see_user.html", previous_starting_date = starting_date.strftime("%Y-%m-%d"), previous_ending_date = ending_date.strftime("%Y-%m-%d"), \
-                                user=current_user, see_user=see_user, Excel_File_Name=f"{DOWNLOAD_PATH}{Excel_File_Name}", download_button_text = f"{see_user.firstName} {see_user.lastName}", \
-                                all_shifts_display_data=user_all_shifts_formatted(user=see_user, use_case="admin html"), all_roles = all_roles)
+                                user=current_user, see_user=see_user, Excel_File_Name=f"{DOWNLOAD_URL}{Excel_File_Name}", download_button_text = f"{see_user.firstName} {see_user.lastName}", \
+                                all_shifts_display_data=user_all_shifts_formatted(user=see_user, use_case="admin html"), all_roles = all_roles, user_current_roles = user_current_roles)
     
 @views_admin.route('/download/<path:excel_filename>', methods=['GET', 'POST'])
 @login_required
@@ -265,6 +292,5 @@ def downloadFile(excel_filename):
         return redirect(url_for('views.home'))
     else:
         
-        #in Python Anywhere, we need to go up two directories
-        path = f"../Excel/{excel_filename}"
+        path = f"{EXCEL_DOWNLOAD_PATH}{excel_filename}"
         return send_file(path, as_attachment=True)

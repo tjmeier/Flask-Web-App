@@ -92,16 +92,16 @@
                         {% for role in all_roles %}
 
                             
-                            {% if user.id is not in [role.role_holders] %}
+                            {% if role.id in user_current_roles %}
 
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="roles-assigned{{role.id}}" name="roles-assigned{{role.id}}" value="Checked">
+                                <input class="form-check-input" type="checkbox" id="roles-assigned{{role.id}}" name="roles-assigned{{role.id}}" value="Checked" checked>
                                 <label class="form-check-label" for="roles-assigned{{role.id}}">{{role.role_name}}</label>
                             </div>
 
                             {% else %}
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="roles-assigned{{role.id}}" name="roles-assigned{{role.id}}" value="Unchecked">
+                                <input class="form-check-input" type="checkbox" id="roles-assigned{{role.id}}" name="roles-assigned{{role.id}}" value="Checked">
                                 <label class="form-check-label" for="roles-assigned{{role.id}}">{{role.role_name}}</label>
                               </div>
 

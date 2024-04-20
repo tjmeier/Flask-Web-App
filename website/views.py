@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from .models import Note, Client, Shift
+from .models import Note, Client, Shift, Role, RoleHolders
 from .dataprocessing import user_all_shifts_formatted
 from . import db #imports database 'db' from the current directory defined in __init__.py
 import json
@@ -11,12 +11,20 @@ views = Blueprint('views', __name__, template_folder='templates')
 
 MY_TIMEZONE = 'US/Eastern' #currently this app only can run in one timezone
 
+
+def get_user_roles(user):
+    if user.roles_held is not None: return [Role.query.get(role_holder.held_role_id) for role_holder in user.roles_held]
+    else: return []
+
+
+
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
     data = request.form
     
     all_clients = Client.query.order_by(Client.lastName)
+    user_roles = get_user_roles(current_user)
 
     #generating page variables
     now = datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
@@ -37,6 +45,7 @@ def home():
 
         shift_dateymd = (current_shift.datetime_clockin).strftime("%Y-%m-%d")
         shift_note = current_shift.note
+        shift_role = Role.query.get(current_shift.role_id)
     
     else:
         shift_timein24h = ""
@@ -44,6 +53,7 @@ def home():
         shift_client = ""
         shift_dateymd = ""
         shift_note = ""
+        shift_role = ""
 
     
     
@@ -52,11 +62,17 @@ def home():
         if request.form['btn'] == 'clockin':
             
             shift_client_id = request.form.get('client-id')
+            shift_role_id = request.form.get('role-id')
 
-            if shift_client_id is not None:
-
+            if shift_client_id is None:
+                flash('Could not clock in! There was no client selected.', category='error')
+            elif shift_role_id is None:
+                flash('Could not clock in! There was no role selected.', category='error')
+            else:
+                shift_role = Role.query.get(shift_role_id)
                 #create a new shift
-                new_shift = Shift(user_id = current_user.id, client_id = shift_client_id,  \
+                new_shift = Shift(user_id = current_user.id, client_id = shift_client_id, \
+                                payrate_for_shift = shift_role.payrate, role_name_for_shift = shift_role.role_name, role_id = shift_role.id, \
                                 datetime_clockin=datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"))
                 db.session.add(new_shift)
                 db.session.commit()
@@ -66,9 +82,7 @@ def home():
                 #update user's active shift
                 current_user.activeShift_id = new_shift.id
                 db.session.commit()
-            
-            else:
-                flash('Could not clock in! There was no client selected.', category='error')
+                        
 
 
             #reload home page
@@ -80,6 +94,8 @@ def home():
             date_in = request.form.get('date-in')
             date_out = request.form.get('date-out')
             shift_client_id = request.form.get('client-id')
+            shift_role = Role.query.get(request.form.get('role-id'))
+            
 
 
             shift_note = request.form.get('shift-note')
@@ -95,6 +111,9 @@ def home():
             current_shift.datetime_clockin = final_datetime_in
             current_shift.client_id = shift_client_id
             current_shift.note = shift_note
+            current_shift.role_name_for_shift = shift_role.role_name
+            current_shift.payrate_for_shift = shift_role.payrate
+            current_shift.role_id = shift_role.id
 
 
 
@@ -126,6 +145,7 @@ def home():
             date_in = request.form.get('date-in')
             shift_client_id = request.form.get('client-id')
             shift_note = request.form.get('shift-note')
+            shift_role = Role.query.get(request.form.get('role-id'))
 
             
             final_datetime_in = datetime.strptime(time_in + " " + date_in, "%H:%M %Y-%m-%d")
@@ -134,6 +154,9 @@ def home():
             current_shift.client_id = shift_client_id
             current_shift.datetime_clockin = final_datetime_in
             current_shift.note = shift_note
+            current_shift.role_name_for_shift = shift_role.role_name
+            current_shift.payrate_for_shift = shift_role.payrate
+            current_shift.role_id = shift_role.id
 
             db.session.commit()
 
@@ -181,7 +204,9 @@ def home():
         shift_timein24h=shift_timein24h,
         shift_totaltime = shift_totaltime,
         shift_client = shift_client,
-        shift_note = shift_note)
+        shift_note = shift_note,
+        user_roles = user_roles,
+        shift_role = shift_role)
 
 
 

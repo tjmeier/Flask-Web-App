@@ -8,11 +8,14 @@ from pytz import timezone
 from .constants import MY_TIMEZONE
 
 
+def get_now():
+    return datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+
+
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     data = db.Column(db.String(10000))
-    date = db.Column(db.DateTime(timezone=False), \
-                     default=datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"))
+    date = db.Column(db.DateTime(timezone=False), default=get_now())
     #ensures a valid user id must be passed upon creation of this note object, 
     #allows a one to many relationship (one user, with multiple notes)
 
@@ -27,8 +30,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150))
     firstName = db.Column(db.String(150))
     lastName = db.Column(db.String(150))
-    datetime_joined = db.Column(db.DateTime(timezone=False), \
-                                default=datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"))
+    datetime_joined = db.Column(db.DateTime(timezone=False), default=get_now())
     
     role = db.Column(db.String(150), default="General")
 
@@ -42,6 +44,8 @@ class User(db.Model, UserMixin):
     activeShift_id = db.Column(db.Integer, default=0)
     shiftsWorked = db.relationship('Shift') #stores all archived job
     # EVENTUALLY MAKE THE ID OF THE ACTIVE_JOBS CLASS
+
+    roles_held = db.relationship('RoleHolders') #multiple
 
 
     #TODO - one user can have multiple roles
@@ -64,6 +68,10 @@ class Shift(db.Model):
     client_id = db.Column(db.Integer, db.ForeignKey('client.id')) 
     note = db.Column(db.String(10000), default="")
 
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id')) 
+    role_name_for_shift = db.Column(db.String(150))
+    payrate_for_shift = db.Column(db.Float, default=0.0)
+
 
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True) #id
@@ -81,8 +89,7 @@ class Client(db.Model):
     zipcode = db.Column(db.String(10))
 
     shiftsReceived = db.relationship('Shift')
-    datetime_added = db.Column(db.DateTime(timezone=False), \
-                                default=datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"))
+    datetime_added = db.Column(db.DateTime(timezone=False), default=get_now())
 
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True) #id
@@ -94,7 +101,14 @@ class Role(db.Model):
     def payrate_str(self):
         return f"${format(self.payrate, '.2f')} / hour"
 
-    role_holders = db.Column(db.Integer, db.ForeignKey('user.id'))
+    role_holders = db.relationship('RoleHolders') #multiple
+    shifts_with_role = db.relationship('Shift')
 
-    datetime_added = db.Column(db.DateTime(timezone=False), \
-                                default=datetime.strptime(((datetime.now()).astimezone(timezone(MY_TIMEZONE))).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"))
+    datetime_added = db.Column(db.DateTime(timezone=False), default=get_now())
+
+class RoleHolders(db.Model):
+    # id = db.Column(db.Integer, primary_key=True) #id
+    #acts as a linkage between users and roles
+    #one user can have multiple roles, and one role can have multiple users
+    holder_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key = True) #one
+    held_role_id = db.Column(db.Integer, db.ForeignKey('role.id'), primary_key = True) #one

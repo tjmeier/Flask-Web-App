@@ -51,12 +51,12 @@ def user_all_shifts_formatted(user, use_case = "user html", datetime_range = "al
             all_shifts_date.append(shift.datetime_clockin.strftime(DATE_MDY_FORMAT)+" to "+shift.datetime_clockout.strftime(DATE_MDY_FORMAT))
     
 
-    all_shift_role_names = [Role.query.get(shift.role_id).role_name for shift in all_shifts]
+    all_shift_role_names = [shift.role_name_for_shift for shift in all_shifts]
 
-    all_shift_payrates_flt = [Role.query.get(shift.role_id).payrate for shift in all_shifts]
+    all_shift_payrates_flt = [shift.payrate_for_shift for shift in all_shifts]
     all_shift_total_price_flt = [float(hours * rate) for (hours,rate) in zip(all_shifts_total_hours, all_shift_payrates_flt)]
 
-    all_shift_payrates_str = [Role.query.get(shift.role_id).payrate_str() for shift in all_shifts]
+    all_shift_payrates_str = [f"${format(shift.payrate_for_shift, '.2f')} / hour" for shift in all_shifts]
     all_shift_total_price_str = [f"${format(hours * rate, '.2f')}" for (hours,rate) in zip(all_shifts_total_hours, all_shift_payrates_flt)]
 
 

@@ -73,6 +73,7 @@ class Shift(db.Model):
     payrate_for_shift = db.Column(db.Float, default=0.0)
 
 
+
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True) #id
     

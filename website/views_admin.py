@@ -164,7 +164,6 @@ def roles():
 
             
             role = Role.query.filter_by(role_name=roleName).first() #sees if there's role a client with that name
-            
 
   
             if len(roleName) < 2:
@@ -192,7 +191,7 @@ def roles():
 
 
 
-@views_admin.route('/role/<int:see_role_id>')
+@views_admin.route('/role/<int:see_role_id>', methods=['GET', 'POST'])
 @login_required
 def role(see_role_id):
     
@@ -202,7 +201,36 @@ def role(see_role_id):
         see_role = Role.query.filter_by(id=see_role_id).first()
 
 
-        #needs to be verified.
+        if request.method == 'POST':
+            if request.form['btn'] == 'update-role':
+                roleName = request.form.get('role-name')
+                description = request.form.get('description')
+                payrate = float(request.form.get('payrate'))
+
+
+                
+                role = Role.query.filter_by(role_name=roleName).first() #sees if there's role a client with that name
+
+
+    
+                if len(roleName) < 2:
+                    flash('Role name must be at least 2 characters.', category='error')
+                    
+                elif payrate < 0:
+                    flash('Payrate must be positive value.', category='error')
+                    
+                elif role and role.role_name != see_role.role_name:
+                    flash('A role with that name already exists.', category='error')
+                    
+                else:
+                    
+                    see_role.role_name = roleName; see_role.description = description; see_role.payrate = payrate
+                    db.session.commit()
+
+                    flash('Role successfully updated!', category='success')
+
+
+        #gets all the users who have this role
         if see_role.role_holders is not None: role_users = [User.query.get(role_holder.holder_user_id) for role_holder in see_role.role_holders]
         else: role_users = []
 

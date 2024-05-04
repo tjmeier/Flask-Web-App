@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -31,6 +31,7 @@ def login():
                 flash('Welcome, '+user.firstName+'!', category='success')
                 login_user(user, remember=True) #using flask_login, remembers the user is logged in for the session
 
+                session.permanent = True #uses cookie with a defined expiration date (defined in __init__.py)
 
                 #checks list of admin emails for the entered email to give admin status
                 if (email in ADMINS):
@@ -108,7 +109,8 @@ def create_account():
 
             login_user(new_user, remember=True) #using flask_login, when you create an account, logs you in automatically
 
-            
+            session.permanent = True #uses cookie with a defined expiration date (defined in __init__.py)
+
             return redirect(url_for('views.home')) #safer than just typing in redirect("/") incase the url ever changes
 
             #if all these checks pass, we can add the user to the database

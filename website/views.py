@@ -117,13 +117,16 @@ def home():
 
 
 
-            if ((final_datetime_out - final_datetime_in).total_seconds() < 0):
+            if ((final_datetime_out - final_datetime_in).total_seconds() < 0): #all shifts must be positive time
                 flash('Your shift cannot be negative duration! Check your time in and time out.', category='error')
                 db.session.commit()
                 return redirect(url_for('views.home'))
             
-            elif (shift_note == ""):
+            elif (shift_note == ""): #all shifts must have a shift note
                 flash('Please enter a shift note before clocking out!', category='error')
+
+            elif (current_shift.role_id not in [role.id for role in user_roles]): #all shifts must be for a role that the user is assigned to
+                flash(f'You are not allowed to have a shift as role \"{shift_role.role_name}\", please select a valid role.', category='error')
                 
             else:
                 current_user.activeShift_id = 0

@@ -34,9 +34,7 @@ def login():
                 session.permanent = True #uses cookie with a defined expiration date (defined in __init__.py)
 
                 #checks list of admin emails for the entered email to give admin status
-                if (email in ADMINS):
-                    user.is_admin = True
-                else:
+                if (email not in ADMINS):
                     user.is_admin = False
 
                 return redirect(url_for('views.home'))
@@ -119,8 +117,8 @@ def create_account():
 
 
 
-
 @views_auth.route('/edit-account', methods=['GET', 'POST'])
+@login_required
 def edit_account():
 
     data = request.form

@@ -13,6 +13,7 @@ def create_app():
     app.config['SECRET_KEY'] = 'gsn#ef?KWkdQGVq%bYQbE_tSQ}3B0*__A$v{`s")4LRU;1y5/o3W{OI_T?^EVQf' #encrypts and secures cookies and session data
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}' #stores database in the 'website' folder
     app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=10) #session timeout time
+    app.config['REMEMBER_COOKIE_DURATION'] = timedelta(minutes=10) #how long the session will "remember you" in the login manager
     db.init_app(app) #initialize database with this current app
 
 

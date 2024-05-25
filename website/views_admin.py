@@ -125,6 +125,8 @@ def clients():
                 db.session.commit()
 
                 flash('Client successfully added!', category='success')
+            
+            return redirect(url_for('views_admin.clients'))
 
 
 
@@ -292,9 +294,7 @@ def user(see_user_id):
 
                 db.session.commit()
 
-
-                #update the current users role values for the sake of the html prechecking the boxes
-                user_current_roles = get_user_role_ids(see_user)
+                return redirect(url_for('views_admin.user', see_user_id=see_user_id))
 
 
         starting_date, ending_date = get_starting_ending_date_selection()

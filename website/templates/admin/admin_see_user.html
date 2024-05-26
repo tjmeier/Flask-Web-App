@@ -91,13 +91,7 @@
         
 
         <h1>Roles Assigned</h1>
-        <input type="radio" class="btn-check" name="options-outlined" id="success-outlined" autocomplete="off" checked>
-        <label class="btn btn-outline-success" for="success-outlined">Checked success radio</label>
         
-        <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off">
-        <label class="btn btn-outline-danger" for="danger-outlined">Danger radio</label>
-
-        <div class="table-responsive container p-3 my-3 border shadow bg-white rounded">
             <h1 align="center">{{user_table_name}}</h1>
             
             <br/>
@@ -117,16 +111,16 @@
                     <tbody>
                         {% for role in all_roles %}
                         <tr >
-                            <td align="center">
+                            <td>
                                 {% if role.id in user_current_roles %}
 
-                                <div>
-                                    <input class="form-check-input form-" type="checkbox" id="roles-assigned{{role.id}}" name="roles-assigned{{role.id}}" value="Checked" checked>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="roles-assigned{{role.id}}" name="roles-assigned{{role.id}}" value="Checked" checked>
                                    
                                 </div>
     
                                 {% else %}
-                                <div class="form-check">
+                                <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="roles-assigned{{role.id}}" name="roles-assigned{{role.id}}" value="Checked">
                                     
                                 </div>

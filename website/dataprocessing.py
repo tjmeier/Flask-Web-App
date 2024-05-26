@@ -7,6 +7,8 @@ import numpy as np
 
 import os
 
+from .pandas2pdf import pandas2pdf
+
 DATE_MDY_FORMAT = "%m/%d/%Y"
 DATE_MDY_DASHES_FORMAT = "%m-%d-%Y"
 TIME_12H_FORMAT = "%I:%M %p"
@@ -81,7 +83,7 @@ def user_all_shifts_formatted(user, use_case = "user html", datetime_range = "al
 def users_shifts_pd_dataframe(users, download_name, starting_datetime, ending_datetime):
 
     EXCEL_DIRECTORY_NAME = "Excel"
-    EXCEL_FILE_NAME = f'{download_name} Shifts {starting_datetime.strftime(DATE_MDY_DASHES_FORMAT)} to {ending_datetime.strftime(DATE_MDY_DASHES_FORMAT)}.xlsx'
+    EXCEL_FILE_NAME = f'{download_name} Shifts {starting_datetime.strftime(DATE_MDY_DASHES_FORMAT)} to {ending_datetime.strftime(DATE_MDY_DASHES_FORMAT)}'
 
     #creates excel folder
     if (not os.path.exists(EXCEL_DIRECTORY_NAME)):
@@ -119,6 +121,8 @@ def users_shifts_pd_dataframe(users, download_name, starting_datetime, ending_da
 
     main_df = pd.concat([df for df in dfs]) #concatenate all these datafro
 
-    main_df.to_excel(EXCEL_DIRECTORY_NAME+"/"+EXCEL_FILE_NAME, index=False, float_format="%.2f")
+    #pandas2pdf(main_df, EXCEL_FILE_NAME)
+
+    main_df.to_excel(EXCEL_DIRECTORY_NAME+"/"+EXCEL_FILE_NAME+".xlsx", index=False, float_format="%.2f")
     
     return EXCEL_FILE_NAME

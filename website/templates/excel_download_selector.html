@@ -1,5 +1,4 @@
-<a class="btn btn-primary btnl-lg" style="width: 100%" href="{{Excel_File_Name}}" role="button" download>Download <strong>{{download_button_text}}</strong> Shifts</a>
-
+<a class="btn btn-primary btnl-lg" style="width: 50%" href="{{Excel_File_Name}}" role="button" download>Download <strong>{{download_button_text}}</strong> Shifts</a>
 
 <form method="POST"> <!-- HTTP post-->
     <div class="form-group" align="center">
@@ -31,15 +30,64 @@
                 <button type="submit" class="btn btn-dark" name="btn" value="update-time-range">Update Time Range</button>
             </div>
         </div>
-
-      
-
-       
-        
-        
-
-
-
     </div>
-
 </form>
+
+
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" disabled>
+    Launch demo modal
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Get All Shifts</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form method="POST"> <!-- HTTP post-->
+                <div class="form-group" align="center">
+                    <div align="center" class = "input-group justify-content-center" style="margin: 2%;">
+            
+                        <div class="col-xs-6">
+                            <label for="starting-date">Starting Date</label>
+                            <input type="date" class="form-control" id="starting-date" name="starting-date" value="{{previous_starting_date}}"/> <!-- html time input type works with YYYY-MM-DD date-->
+                            <br/>
+                            
+                            
+                            <button type="submit" class="btn btn-secondary" name="btn" value="past-week-time-range"> << One Week </button>
+                            <br/>
+                            <br/>
+            
+                            <button type="submit" class="btn btn-dark" name="btn" value="past-pay-period-time-range">Past Pay Period</button>
+                        </div>
+            
+                        <div class="col-xs-6">
+                            <label for="ending-date">Ending Date</label>  
+                            <input type="date" class="form-control" id="ending-date" name="ending-date" value="{{previous_ending_date}}"/> <!-- html time input type works with YYYY-MM-DD date-->
+                        
+                            <br/>
+            
+                            <button type="submit" class="btn btn-secondary" name="btn" value="next-week-time-range"> One Week >> </button>
+                            <br/>
+                            <br/>
+            
+                            <button type="submit" class="btn btn-dark" name="btn" value="update-time-range">Update Time Range</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <a class="btn btn-primary btnl-lg" style="width: 50%" href="{{Excel_File_Name}}" role="button" download>Download <strong>{{download_button_text}}</strong> Shifts</a>
+
+        </div>
+      </div>
+    </div>
+  </div>

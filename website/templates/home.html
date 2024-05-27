@@ -5,6 +5,40 @@
 {% block content %}
 <br/>
 
+
+
+<script>
+    function liveShiftTime() {
+        var time = new Date();
+        var hours = time.getHours();
+        var minutes = time.getMinutes();
+        var seconds = time.getSeconds();
+        var shift_totaltime = "{{shift_totaltime}}";
+
+        var time24 = hours + ":" + minutes
+        var time24_delayed = hours + ":" + (minutes-1)
+
+        const timeoutfield = document.getElementById('time-out');
+        if (time24_delayed == timeoutfield.getAttribute("value")) {
+            timeoutfield.setAttribute("value", time24);
+        }
+
+
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        hours = hours < 10 ? '0' + hours : hours;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        document.getElementById('showLiveTime').innerHTML = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+        //document.getElementById('showLiveShiftTime').innerHTML = shift_totaltime.slice(0,shift_totaltime.length-2) + seconds;
+
+        
+
+        setTimeout(liveShiftTime, 1000);
+    }
+</script>
+
 <div class="container p-3 my-3 border shadow bg-white rounded">
     <form method="POST"> <!-- HTTP post-->
         <div class="row form-group" align="center">
@@ -24,7 +58,7 @@
                 <br/>
                 <br/>
 
-                <h3 class="text-secondary">{{current_time12h}}</h3>
+                <h3 class="text-secondary" id="showLiveTime">{{current_time12h}}</h3>
                 <h3 class="text-secondary">{{current_weekday}} {{current_date}}</h3>
 
                 <br/>
@@ -57,7 +91,16 @@
                 <h1>Current Shift</h1>
                 
 
-                <h1 class="text-success">{{shift_totaltime}}</h1>
+                <h1 class="text-success" id="showLiveShiftTime">{{shift_totaltime}}</h1>
+
+
+
+
+
+
+
+
+
                 
                 <h3 class="text-primary"><b>{{shift_role.role_name}}</b> for <br> <b>{{shift_client.firstName}} {{shift_client.lastName}}</b></h3>
 
@@ -71,8 +114,7 @@
 
                 <br/>
                 <br/>
-
-                <h3 class="text-secondary">{{current_time12h}}</h3>
+                <h3 class="text-secondary" id="showLiveTime">{{current_time12h}}</h3>
                 <h3 class="text-secondary">{{current_weekday}} {{current_date}}</h3>
 
                 <br/>
